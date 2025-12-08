@@ -1,0 +1,61 @@
+.container {
+  padding: 25px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+  border-left: 5px solid #4a67ff;
+  transition: 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  color: #4a67ff;
+}
+
+.message {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #444;
+}
+
+.date {
+  font-size: 13px;
+  color: #777;
+}
+
+.info {
+  border-left-color: #4a67ff;
+}
+
+.update {
+  border-left-color: #00c589;
+}
+
+.promo {
+  border-left-color: #ff6b00;
+}

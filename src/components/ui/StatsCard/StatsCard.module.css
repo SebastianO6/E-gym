@@ -1,0 +1,42 @@
+.card{
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:100px;
+}
+
+.meta{
+  display:flex;
+  flex-direction:column;
+}
+
+.title{
+  font-size:13px;
+  color:var(--muted);
+  margin:0 0 8px 0;
+}
+
+.value{
+  font-size:22px;
+  font-weight:700;
+  color:var(--color-primary-dark);
+  margin:0;
+}
+
+.subtitle{
+  margin-top:12px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* accent color helper classes (optional)
+   Apply e.g. stats-blue, stats-green, stats-purple, stats-orange
+*/
+.stats-blue{ background: linear-gradient(90deg,#EAF2FF,#EEF4FF); }
+.stats-green{ background: linear-gradient(90deg,#ECFDF5,#F0FFF4); }
+.stats-purple{ background: linear-gradient(90deg,#F5F3FF,#FDF7FF); }
+.stats-orange{ background: linear-gradient(90deg,#FFF7ED,#FFF8F2); }

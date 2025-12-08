@@ -1,0 +1,75 @@
+.container {
+  padding: 25px 40px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #666;
+}
+
+.addBtn {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.search {
+  width: 100%;
+  margin: 20px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  border-collapse: collapse;
+  box-shadow: var(--shadow);
+}
+
+.table th,
+.table td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.viewBtn {
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.active {
+  background: #d9f7e9;
+  color: #06923d;
+}
+
+.expired {
+  background: #ffe0e0;
+  color: #c62828;
+}

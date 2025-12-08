@@ -1,0 +1,18 @@
+.bubble {
+  padding: 12px 14px;
+  border-radius: 14px;
+  max-width: 70%;
+  font-size: 14px;
+}
+
+.client {
+  background: #000dff;
+  color: white;
+  align-self: flex-end;
+}
+
+.trainer {
+  background: #e8eaff;
+  color: #111;
+  align-self: flex-start;
+}

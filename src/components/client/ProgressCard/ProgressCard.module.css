@@ -1,0 +1,27 @@
+.card {
+  padding: 18px;
+  border-radius: 10px;
+  color: white;
+}
+
+.label {
+  font-size: 14px;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.purple {
+  background: var(--gradient-purple);
+}
+
+.blue {
+  background: var(--gradient-blue);
+}
+
+.orange {
+  background: var(--gradient-orange);
+}

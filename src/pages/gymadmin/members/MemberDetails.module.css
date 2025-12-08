@@ -1,0 +1,102 @@
+.container {
+  padding: 20px 40px;
+}
+
+.loading {
+  padding: 30px;
+  font-size: 18px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.status {
+  padding: 5px 12px;
+  border-radius: 8px;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.active {
+  background: #28a74522;
+  color: #28a745;
+}
+
+.expired {
+  background: #d9534f22;
+  color: #d9534f;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.editBtn,
+.renewBtn,
+.suspendBtn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.editBtn {
+  background: #0275d8;
+  color: white;
+}
+
+.renewBtn {
+  background: #5cb85c;
+  color: white;
+}
+
+.suspendBtn {
+  background: #d9534f;
+  color: white;
+}
+
+.card {
+  background: white;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.paymentTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.paymentTable th,
+.paymentTable td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.progressBar {
+  height: 10px;
+  background: #eee;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.progress {
+  height: 10px;
+  border-radius: 5px;
+}
+
+.expiredText {
+  color: #d9534f;
+  font-weight: bold;
+}

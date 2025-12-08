@@ -1,0 +1,94 @@
+/* src/pages/gymadmin/Dashboard.module.css */
+
+.container {
+  padding: 25px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.loading {
+  padding: 25px;
+  font-size: 18px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.card {
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.label {
+  font-size: 14px;
+  color: #777;
+}
+
+.value {
+  font-size: 26px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.revenueBox {
+  padding: 20px;
+  background: #fff4e6;
+  border-left: 4px solid #ff9b41;
+  border-radius: 10px;
+  margin-bottom: 35px;
+}
+
+.revenue {
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+.listCard {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.listCard ul {
+  margin-top: 15px;
+  list-style: none;
+  padding: 0;
+}
+
+.listCard li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.listCard li:last-child {
+  border-bottom: none;
+}
+
+small {
+  color: #888;
+}

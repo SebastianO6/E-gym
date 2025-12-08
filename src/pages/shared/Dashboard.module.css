@@ -1,0 +1,115 @@
+.container {
+  padding: 25px 40px;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin-top: 5px;
+  color: #777;
+}
+
+.statsGrid {
+  display: grid;
+  margin: 25px 0;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.statCard {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.statCard h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.statCard p {
+  margin: 5px 0 0;
+  color: #777;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  box-shadow: var(--shadow);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.active {
+  background: #28a74522;
+  color: #28a745;
+}
+
+.pending {
+  background: #ffc10733;
+  color: #d39e00;
+}
+
+.suspended {
+  background: #dc354522;
+  color: #dc3545;
+}
+
+.viewBtn {
+  padding: 6px 12px;
+  background: #0275d8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sessionItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.time {
+  font-weight: 600;
+}

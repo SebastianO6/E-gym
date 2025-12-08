@@ -1,0 +1,10 @@
+.container { padding:24px; }
+.header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.tags { display:flex; gap:8px; align-items:center; }
+.tag { background:#f5f7fb; color:#333; padding:6px 10px; border-radius:8px; }
+.planTag { background:#e8f6ee; color:#2b9e48; padding:6px 10px; border-radius:8px; }
+.card { background:#fff; padding:14px; border-radius:10px; margin-top:12px; border:1px solid #eee; }
+.actions { display:flex; gap:10px; margin-top:16px; }
+.primary { background:#325fff; color:white; padding:10px 14px; border-radius:8px; border:none; }
+.secondary { background:#eef3ff; color:#325fff; padding:10px 14px; border-radius:8px; border:none; }
+.ghost { background:#f0f0f0; padding:10px 14px; border-radius:8px; border:none; }

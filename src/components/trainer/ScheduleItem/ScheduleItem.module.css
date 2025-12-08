@@ -1,0 +1,16 @@
+.row {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.client {
+  font-weight: 600;
+}
+
+.type {
+  color: var(--muted);
+}

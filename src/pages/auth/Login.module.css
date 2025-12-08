@@ -1,0 +1,21 @@
+.wrapper {
+  min-height: 100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: var(--bg);
+}
+.card {
+  width: 360px;
+  background: white;
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+label { font-size:13px; color:var(--muted); }
+input { padding:10px; border-radius:8px; border:1px solid #ddd; }
+button { padding:10px; border-radius:8px; border:none; background:var(--color-primary); color:white; cursor:pointer; }
+.error { color: var(--danger); background: #fff0f0; padding:8px; border-radius:6px; }

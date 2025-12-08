@@ -1,0 +1,111 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: -10px;
+}
+
+.statsGrid {
+  display: grid;
+  gap: 15px;
+}
+
+@media (min-width: 900px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.statCard {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.statLabel {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.actionBtn {
+  background: var(--color-primary);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sessionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  padding: 14px 16px;
+  border-radius: 8px;
+}
+
+.memberName {
+  font-weight: 600;
+}
+
+.time {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.startBtn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}

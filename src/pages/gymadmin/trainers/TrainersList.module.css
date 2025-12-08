@@ -1,0 +1,8 @@
+.container { padding:20px; }
+.header { display:flex; justify-content:space-between; align-items:center; }
+.search { padding:8px; border-radius:8px; border:1px solid #ddd; }
+.list { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+.item { display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid #eee; border-radius:8px; background:#fff; }
+.name { font-weight:600; }
+.email { color:#666; font-size:13px; }
+.view { background:#eef3ff; color:#325fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }

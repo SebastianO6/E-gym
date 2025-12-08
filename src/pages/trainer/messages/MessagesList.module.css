@@ -1,0 +1,56 @@
+.container {
+  padding: 25px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chatItem {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #eee;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #325fff;
+  color: white;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.name {
+  margin: 0;
+  font-size: 17px;
+}
+
+.lastMessage {
+  margin: 2px 0 0;
+  color: #777;
+}
+
+.time {
+  color: #999;
+  font-size: 13px;
+}

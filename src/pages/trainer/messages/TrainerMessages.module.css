@@ -1,0 +1,4 @@
+/* src/pages/trainer/messages/TrainerMessages.module.css */
+.container { display:flex; gap:12px; padding:16px; }
+.left { width:320px; }
+.right { flex:1; background:#fff; border-radius:10px; border:1px solid #eee; min-height:480px; padding:0; overflow:hidden; }

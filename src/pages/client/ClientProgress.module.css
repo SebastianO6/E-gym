@@ -1,0 +1,13 @@
+.container {
+  padding: 25px;
+}
+
+.placeholder {
+  margin-top: 20px;
+  padding: 40px;
+  background: #f7f7ff;
+  border: 2px dashed #c0c3ff;
+  text-align: center;
+  border-radius: 12px;
+  color: #4a4cc5;
+}

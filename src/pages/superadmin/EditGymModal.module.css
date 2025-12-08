@@ -1,0 +1,22 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal {
+  width: 520px;
+  background: #fff;
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.formGroup { margin-bottom: 12px; display:flex; flex-direction:column; }
+.formGroup label { font-weight:600; margin-bottom:6px; }
+.modal input, .modal select, .modal textarea { padding:10px; border-radius:6px; border:1px solid #ddd; }
+.actions { display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+.cancel { background:#f0f0f5; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
+.save { background:var(--color-primary); color:#fff; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; }
