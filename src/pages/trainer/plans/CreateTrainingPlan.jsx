@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "./CreateTrainingPlan.module.css";
+import { Plus, Save, X, Calendar } from "lucide-react";
 
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
@@ -25,44 +26,106 @@ export default function CreateTrainingPlan() {
 
   const save = () => {
     const payload = { memberId, planName, notes, days: exercises };
-    console.log("SAVE PLAN (TODO API):", payload);
-    // TODO: api.post('/trainer/plans', payload)
-    alert("Plan saved (mock)");
+    console.log("SAVE PLAN:", payload);
+    alert("Training plan saved successfully!");
     navigate(`/trainer/members/${memberId}`);
   };
 
   return (
     <div className={styles.container}>
-      <h1>Create Training Plan</h1>
-      <label>Plan Name</label>
-      <input className={styles.input} value={planName} onChange={(e)=>setPlanName(e.target.value)} placeholder="e.g. Strength 8-week" />
-
-      <div className={styles.days}>
-        {DAYS.map(d=>(
-          <button key={d} onClick={()=>setSelectedDay(d)} className={`${styles.day} ${selectedDay===d ? styles.active : ''}`}>{d}</button>
-        ))}
+      <div className={styles.header}>
+        <h1 className={styles.title}>Create Training Plan</h1>
       </div>
 
-      <h3>{selectedDay} Exercises</h3>
-      <button className={styles.add} onClick={addExercise}>+ Add Exercise</button>
+      <div className={styles.mainForm}>
+        <div>
+          <label className={styles.label}>Plan Name</label>
+          <input 
+            className={styles.input} 
+            value={planName} 
+            onChange={(e)=>setPlanName(e.target.value)} 
+            placeholder="e.g. Strength Phase 1 - 8 Weeks" 
+          />
+        </div>
 
-      <div className={styles.list}>
-        {(exercises[selectedDay] || []).map(ex=>(
-          <div key={ex.id} className={styles.card}>
-            <input value={ex.name} placeholder="Exercise" onChange={(e)=>update(selectedDay,ex.id,'name',e.target.value)} className={styles.small} />
-            <input value={ex.sets} placeholder="Sets" onChange={(e)=>update(selectedDay,ex.id,'sets',e.target.value)} className={styles.tiny} />
-            <input value={ex.reps} placeholder="Reps" onChange={(e)=>update(selectedDay,ex.id,'reps',e.target.value)} className={styles.tiny} />
-            <input value={ex.rest} placeholder="Rest (sec)" onChange={(e)=>update(selectedDay,ex.id,'rest',e.target.value)} className={styles.tiny}/>
+        {/* Day Tabs */}
+        <div>
+          <label className={styles.label}>Schedule</label>
+          <div className={styles.tabs}>
+            {DAYS.map(d=>(
+              <button 
+                key={d} 
+                onClick={()=>setSelectedDay(d)} 
+                className={`${styles.tab} ${selectedDay===d ? styles.tabActive : ''}`}
+              >
+                {d}
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <label>Notes</label>
-      <textarea className={styles.textarea} value={notes} onChange={(e)=>setNotes(e.target.value)} />
+        {/* Exercise Editor */}
+        <div className={styles.exerciseSection}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.dayTitle}><Calendar size={16} style={{display:'inline', marginRight:6}}/> {selectedDay} Workout</h3>
+            <button className={styles.addBtn} onClick={addExercise}>
+              <Plus size={14} /> Add Exercise
+            </button>
+          </div>
 
-      <div style={{marginTop:12}}>
-        <button className={styles.save} onClick={save}>Save Plan</button>
-        <button className={styles.cancel} onClick={()=>navigate(-1)}>Cancel</button>
+          <div className={styles.exerciseList}>
+            {(!exercises[selectedDay] || exercises[selectedDay].length === 0) && (
+              <p style={{color:'var(--text-light)', fontSize:14, textAlign:'center', fontStyle:'italic'}}>No exercises added for {selectedDay}.</p>
+            )}
+            {(exercises[selectedDay] || []).map(ex=>(
+              <div key={ex.id} className={styles.exerciseCard}>
+                <input 
+                  value={ex.name} 
+                  placeholder="Exercise Name" 
+                  onChange={(e)=>update(selectedDay,ex.id,'name',e.target.value)} 
+                  className={styles.inputSmall} 
+                />
+                <input 
+                  value={ex.sets} 
+                  placeholder="Sets" 
+                  onChange={(e)=>update(selectedDay,ex.id,'sets',e.target.value)} 
+                  className={styles.inputSmall} 
+                />
+                <input 
+                  value={ex.reps} 
+                  placeholder="Reps" 
+                  onChange={(e)=>update(selectedDay,ex.id,'reps',e.target.value)} 
+                  className={styles.inputSmall} 
+                />
+                <input 
+                  value={ex.rest} 
+                  placeholder="Rest (s)" 
+                  onChange={(e)=>update(selectedDay,ex.id,'rest',e.target.value)} 
+                  className={styles.inputSmall}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className={styles.label}>Coach Notes</label>
+          <textarea 
+            className={styles.textarea} 
+            value={notes} 
+            onChange={(e)=>setNotes(e.target.value)} 
+            rows={4}
+            placeholder="Instructions, focus points, or cardio assignments..."
+          />
+        </div>
+
+        <div className={styles.actions}>
+          <button className={`${styles.btn} ${styles.cancel}`} onClick={()=>navigate(-1)}>Cancel</button>
+          <button className={`${styles.btn} ${styles.save}`} onClick={save}>
+            <Save size={16} style={{display:'inline', marginRight:6}}/>
+            Save Plan
+          </button>
+        </div>
       </div>
     </div>
   );

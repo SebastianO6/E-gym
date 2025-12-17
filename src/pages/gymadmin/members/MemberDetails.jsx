@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./MemberDetails.module.css";
-import RenewModal from "./RenewModal";
-import EditMemberModal from "./EditMemberModal";
+import RenewModal from "./RenewModal.jsx";
+import EditMemberModal from "./EditMemberModal.jsx";
+import { Edit2, CreditCard } from "lucide-react";
 
 const MOCK_MEMBER = {
   id: 1,
@@ -24,26 +25,62 @@ const MemberDetails = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>{m.name}</h1>
+      {/* Header Info */}
+      <div className={styles.header}>
+        <div className={styles.headerInfo}>
+          <h1>
+            {m.name}
+            <span className={`${styles.statusBadge} ${styles[m.status.toLowerCase()]}`}>
+              {m.status}
+            </span>
+          </h1>
+          <div className={styles.detailsMeta}>
+            <span>Plan: {m.plan}</span>
+            <span>•</span>
+            <span>Expires: {m.expires}</span>
+          </div>
+        </div>
 
-      <p><strong>Phone:</strong> {m.phone}</p>
-      <p><strong>Plan:</strong> {m.plan}</p>
-      <p><strong>Expires:</strong> {m.expires}</p>
-
-      <div className={styles.actions}>
-        <button onClick={() => setShowEdit(true)}>Edit</button>
-        <button onClick={() => setShowRenew(true)} className={styles.renewBtn}>
-          Renew Subscription
-        </button>
+        <div className={styles.actions}>
+          <button className={`${styles.btn} ${styles.btnEdit}`} onClick={() => setShowEdit(true)}>
+            <Edit2 size={16} /> Edit
+          </button>
+          <button className={`${styles.btn} ${styles.btnRenew}`} onClick={() => setShowRenew(true)}>
+            <CreditCard size={16} /> Renew Subscription
+          </button>
+        </div>
       </div>
 
-      <div className={styles.card}>
-        <h2>Attendance History</h2>
-        <ul>
-          {m.attendance.map((d, i) => (
-            <li key={i}>{d}</li>
-          ))}
-        </ul>
+      <div className={styles.contentGrid}>
+        {/* Personal Details */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Personal Details</h2>
+          <div className={styles.infoRow}>
+            <span className={styles.label}>Phone Number</span>
+            <span className={styles.value}>{m.phone}</span>
+          </div>
+          <div className={styles.infoRow}>
+            <span className={styles.label}>Member ID</span>
+            <span className={styles.value}>#{m.id}</span>
+          </div>
+          <div className={styles.infoRow}>
+            <span className={styles.label}>Current Plan</span>
+            <span className={styles.value}>{m.plan}</span>
+          </div>
+        </div>
+
+        {/* Attendance */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Recent Attendance</h2>
+          <ul className={styles.historyList}>
+            {m.attendance.map((d, i) => (
+              <li key={i} className={styles.historyItem}>
+                <span>Check-in</span>
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {showRenew && <RenewModal onClose={() => setShowRenew(false)} />}

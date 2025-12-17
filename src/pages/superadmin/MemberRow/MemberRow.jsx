@@ -1,32 +1,41 @@
 import React from "react";
 import styles from "./MemberRow.module.css";
 
-/**
- * MemberRow
- * Props:
- *  - member: { id, name, plan, status, dueDate, trainer }
- *  - onView(member)
- *  - onSuspend(member)
- */
 const MemberRow = ({ member, onView, onSuspend }) => {
+  const initials = member.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <div className={styles.row}>
-      <div className={styles.colName}>
-        <div className={styles.avatar}>
-          {member.name.split(" ").map(n => n[0]).join("").slice(0,2)}
-        </div>
-        <div>
-          <div className={styles.name}>{member.name}</div>
-          <div className={styles.meta}>{member.plan} · {member.trainer || "-"}</div>
+      {/* Name Column */}
+      <div className={styles.mainInfo}>
+        <div className={styles.avatar}>{initials}</div>
+        <div className={styles.nameCol}>
+          <h4>{member.name}</h4>
+          <p className={styles.meta}>
+            {member.plan} <span>•</span> {member.trainer || "No Trainer"}
+          </p>
         </div>
       </div>
 
-      <div className={styles.col}>{member.status}</div>
-      <div className={styles.col}>{member.dueDate}</div>
+      {/* Details */}
+      <div className={styles.details}>
+        <div style={{ marginLeft: '16px' }}>
+          <span className={`${styles.badge} ${member.status.toLowerCase() === 'active' ? styles.active : styles.inactive}`}>
+            {member.status}
+          </span>
+        </div>
 
-      <div className={styles.actions}>
-        <button className={styles.viewBtn} onClick={() => onView(member)}>View</button>
-        <button className={styles.suspendBtn} onClick={() => onSuspend(member)}>Suspend</button>
+        <div className={styles.dueDate}>Due: {member.dueDate}</div>
+
+        <div className={styles.actions}>
+          <button className={styles.btnView} onClick={() => onView(member)}>View</button>
+          <button className={styles.btnSuspend} onClick={() => onSuspend(member)}>Suspend</button>
+        </div>
       </div>
     </div>
   );

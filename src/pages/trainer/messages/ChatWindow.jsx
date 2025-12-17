@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import styles from "./ChatWindow.module.css";
+import styles from "./TrainerMessages.module.css"; // Reuse styling for consistency
+import { Send, User } from "lucide-react";
 
+// Using the same styles as TrainerMessages but in a simplified standalone view
 const mockMessages = {
   101: [
     { from: "member", text: "Hi coach!", time: "10:22 AM" },
@@ -14,7 +16,8 @@ export default function ChatWindow() {
   const [messages, setMessages] = useState(mockMessages[memberId] || []);
   const [input, setInput] = useState("");
 
-  const sendMessage = () => {
+  const sendMessage = (e) => {
+    e.preventDefault();
     if (!input.trim()) return;
 
     const newMsg = {
@@ -28,34 +31,39 @@ export default function ChatWindow() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>Chat with Member #{memberId}</div>
+    <div style={{ height: 'calc(100vh - 100px)', padding: 20 }}>
+      <main className={styles.chatArea} style={{ height: '100%' }}>
+        <div className={styles.chatHeader}>
+          <User size={20} /> Chat with Member #{memberId}
+        </div>
 
-      <div className={styles.messages}>
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`${styles.message} ${
-              msg.from === "trainer" ? styles.mine : styles.theirs
-            }`}
-          >
-            {msg.text}
-            <span className={styles.time}>{msg.time}</span>
-          </div>
-        ))}
-      </div>
+        <div className={styles.messagesList}>
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={`${styles.messageBubble} ${
+                msg.from === "trainer" ? styles.msgMe : styles.msgThem
+              }`}
+            >
+              <div className={styles.senderName}>{msg.from === "trainer" ? "You" : "Member"} • {msg.time}</div>
+              {msg.text}
+            </div>
+          ))}
+        </div>
 
-      <div className={styles.inputRow}>
-        <input
-          className={styles.input}
-          placeholder="Type your message…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button className={styles.sendBtn} onClick={sendMessage}>
-          Send
-        </button>
-      </div>
+        <form onSubmit={sendMessage} className={styles.inputArea}>
+          <textarea
+            className={styles.textarea}
+            placeholder="Type your message…"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={1}
+          />
+          <button type="submit" className={styles.sendBtn}>
+            <Send size={18} />
+          </button>
+        </form>
+      </main>
     </div>
   );
 }

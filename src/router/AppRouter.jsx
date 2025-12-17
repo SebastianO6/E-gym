@@ -7,21 +7,25 @@ import Login from "../pages/auth/Login";
 import Unauthorized from "../pages/common/Unauthorized";
 import NotFound from "../pages/common/NotFound";
 
-// SUPER ADMIN
+/* ============================
+   SUPERADMIN
+============================ */
 import SA_Dashboard from "../pages/superadmin/Dashboard";
 import SA_AllGyms from "../pages/superadmin/AllGyms";
 import SA_GymDetails from "../pages/superadmin/GymDetails";
 
-// GYM ADMIN
+/* ============================
+   GYM ADMIN
+============================ */
 import GA_Dashboard from "../pages/gymadmin/Dashboard";
 import MembersList from "../pages/gymadmin/members/MembersList";
 import MemberDetails from "../pages/gymadmin/members/MemberDetails";
-
-// Gym Admin — Trainer Management
 import TrainersList from "../pages/gymadmin/trainers/TrainersList";
 import TrainerDetails from "../pages/gymadmin/trainers/TrainersDetails";
 
-// TRAINER
+/* ============================
+   TRAINER
+============================ */
 import TrainerDashboard from "../pages/trainer/Dashboard";
 import TrainerMembers from "../pages/trainer/members/TrainerMembers";
 import TrainerMemberDetails from "../pages/trainer/members/TrainerMemberDetails";
@@ -33,23 +37,31 @@ import TrainerMessages from "../pages/trainer/messages/TrainerMessages";
 import MessagesList from "../pages/trainer/messages/MessagesList";
 import ChatWindow from "../pages/trainer/messages/ChatWindow";
 
-// CLIENT
+/* ============================
+   CLIENT
+============================ */
 import ClientDashboard from "../pages/client/Dashboard";
 import ClientPlan from "../pages/client/plan/ClientPlan";
 import ClientProgress from "../pages/client/ClientProgress";
-import ClientMessages from "../pages/client/messages/ClientMessages";
-import Announcements from "../pages/client/messages/announcements/ClientAnnouncements";
 
+// Corrected imports
+import ClientMessages from "../pages/client/messages/ClientMessages";
+import ClientAnnouncements from "../pages/client/messages/announcements/ClientAnnouncements";
+
+/* ============================ */
 
 export default function AppRouter() {
   return (
     <Routes>
+
       {/* DEFAULT REDIRECT */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* SUPERADMIN ROUTES */}
+      {/* ============================
+          SUPERADMIN ROUTES
+      ============================ */}
       <Route
         path="/superadmin"
         element={
@@ -63,7 +75,9 @@ export default function AppRouter() {
         <Route path="gyms/:gymId" element={<SA_GymDetails />} />
       </Route>
 
-      {/* GYM ADMIN ROUTES */}
+      {/* ============================
+          GYM ADMIN ROUTES
+      ============================ */}
       <Route
         path="/gymadmin"
         element={
@@ -83,7 +97,9 @@ export default function AppRouter() {
         <Route path="trainers/:trainerId" element={<TrainerDetails />} />
       </Route>
 
-      {/* TRAINER ROUTES */}
+      {/* ============================
+          TRAINER ROUTES
+      ============================ */}
       <Route
         path="/trainer"
         element={
@@ -93,22 +109,21 @@ export default function AppRouter() {
         }
       >
         <Route index element={<TrainerDashboard />} />
-
         <Route path="members" element={<TrainerMembers />} />
         <Route path="members/:memberId" element={<TrainerMemberDetails />} />
         <Route path="plans/create" element={<CreateTrainingPlan />} />
         <Route path="schedule" element={<TrainerSchedule />} />
 
-        {/* Messaging structure with nested routes */}
+        {/* Messaging */}
         <Route path="messages" element={<TrainerMessages />}>
           <Route index element={<MessagesList />} />
           <Route path=":memberId" element={<ChatWindow />} />
         </Route>
       </Route>
 
-      {/* CLIENT ROUTES */}
-      {/* CLIENT ROUTES */}
-      {/* CLIENT ROUTES */}
+      {/* ============================
+          CLIENT ROUTES
+      ============================ */}
       <Route
         path="/client"
         element={
@@ -121,11 +136,8 @@ export default function AppRouter() {
         <Route path="plan" element={<ClientPlan />} />
         <Route path="progress" element={<ClientProgress />} />
         <Route path="messages" element={<ClientMessages />} />
-        <Route path="announcements" element={<Announcements />} />
+        <Route path="announcements" element={<ClientAnnouncements />} />
       </Route>
-
-
-
 
       {/* NOT FOUND */}
       <Route path="*" element={<NotFound />} />

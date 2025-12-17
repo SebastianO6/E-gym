@@ -1,47 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+// import { listSent, sendMessage } from "../../../services/trainerService"; // Keeps service logic intent
 import styles from "./ClientMessages.module.css";
-import MessageBubble from "../components/MessageBubble";
+import { Send, User } from "lucide-react";
 
-const ClientMessages = () => {
+export default function ClientMessages() {
+  // Merging ChatWindow logic here for a complete view
   const [messages, setMessages] = useState([
-    { id: 1, from: "trainer", text: "How is your workout going today?" },
-    { id: 2, from: "client", text: "Great! Feeling stronger 💪" },
+    { id: 1, from: "trainer", text: "Welcome to your new plan! 💪", time: "10:00 AM" },
+    { id: 2, from: "client", text: "Thanks coach! Excited to start.", time: "10:05 AM" }
   ]);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [input, setInput] = useState("");
+  // Mock loading
+  useEffect(() => {
+     // In real app: listSent()...
+  }, []);
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!text.trim()) return;
 
-    setMessages([...messages, { id: Date.now(), from: "client", text: input }]);
-    setInput("");
+    // Simulate optimistic update
+    const newMsg = { id: Date.now(), from: "client", text: text, time: "Just now" };
+    setMessages([...messages, newMsg]);
+    setText("");
+
+    // In real app: sendMessage(...)
   };
 
   return (
     <div className={styles.container}>
-
-      <h2 className={styles.title}>Messages with Your Trainer</h2>
+      <h1 className={styles.title}>Chat with Coach</h1>
 
       <div className={styles.chatBox}>
         {messages.map((m) => (
-          <MessageBubble key={m.id} text={m.text} from={m.from} />
+          <div
+            key={m.id}
+            className={`${styles.messageBubble} ${m.from === "client" ? styles.clientMsg : styles.trainerMsg}`}
+          >
+            <div className={styles.senderLabel}>{m.from === "client" ? "You" : "Coach"}</div>
+            {m.text}
+          </div>
         ))}
       </div>
 
-      <div className={styles.inputRow}>
-        <input
-          className={styles.input}
-          placeholder="Type a message…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+      <form className={styles.inputRow} onSubmit={handleSend}>
+        <textarea
+          className={styles.textarea}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type a message to your trainer..."
+          rows={1}
         />
-        <button onClick={sendMessage} className={styles.sendBtn}>
-          Send
+        <button type="submit" className={styles.sendBtn}>
+          <Send size={18} /> Send
         </button>
-      </div>
-
+      </form>
     </div>
   );
-};
-
-export default ClientMessages;
+}

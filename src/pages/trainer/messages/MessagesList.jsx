@@ -3,24 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styles from "./MessagesList.module.css";
 
 const mockChats = [
-  {
-    memberId: 101,
-    name: "John Doe",
-    lastMessage: "Thanks for the workout plan!",
-    time: "2h ago"
-  },
-  {
-    memberId: 102,
-    name: "Sarah Smith",
-    lastMessage: "Can we adjust Monday routine?",
-    time: "5h ago"
-  },
-  {
-    memberId: 103,
-    name: "Mark Johnson",
-    lastMessage: "Completed today's session!",
-    time: "1d ago"
-  }
+  { memberId: 101, name: "John Doe", lastMessage: "Thanks for the workout plan!", time: "2h ago" },
+  { memberId: 102, name: "Sarah Smith", lastMessage: "Can we adjust Monday routine?", time: "5h ago" },
+  { memberId: 103, name: "Mark Johnson", lastMessage: "Completed today's session!", time: "1d ago" }
 ];
 
 export default function MessagesList() {
@@ -28,8 +13,10 @@ export default function MessagesList() {
 
   return (
     <div className={styles.container}>
-      <h1>Messages</h1>
-      <p className={styles.subtitle}>Conversations with your assigned clients</p>
+      <div>
+        <h1 className={styles.title}>Messages</h1>
+        <p className={styles.subtitle}>Conversations with your assigned clients</p>
+      </div>
 
       <div className={styles.list}>
         {mockChats.map(chat => (

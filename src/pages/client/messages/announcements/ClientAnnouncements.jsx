@@ -1,51 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+// import { getAnnouncements } from "../../../../services/clientService"; // Mocking
 import styles from "./ClientAnnouncements.module.css";
-import { Megaphone } from "lucide-react";
+import { Bell } from "lucide-react";
 
-const ClientAnnouncements = () => {
-  const announcements = [
-    {
-      id: 1,
-      title: "Gym Closed Sunday",
-      message: "We will be closed for maintenance. Back to normal Monday.",
-      date: "Feb 10, 2025",
-      type: "info",
-    },
-    {
-      id: 2,
-      title: "New Yoga Classes",
-      message: "Early-morning yoga now available at 6AM.",
-      date: "Feb 7, 2025",
-      type: "update",
-    },
-    {
-      id: 3,
-      title: "Membership Discount",
-      message: "Renew early and get 15% off for 3 months!",
-      date: "Feb 5, 2025",
-      type: "promo",
-    },
-  ];
+const MOCK_ANNS = [
+  { id: 1, title: "Holiday Hours", message: "The gym will be closed on Dec 25th. Open regular hours on Dec 26th.", date: "2023-12-20" },
+  { id: 2, title: "New Equipment", message: "We have installed 3 new squat racks in the main lifting area!", date: "2023-11-15" }
+];
+
+export default function ClientAnnouncements() {
+  const [anns, setAnns] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Mock fetch
+    setTimeout(() => {
+        setAnns(MOCK_ANNS);
+        setLoading(false);
+    }, 500);
+  }, []);
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Announcements</h2>
-
+      <h1 className={styles.title}>Gym Announcements</h1>
+      
+      {loading && <div style={{padding:20}}>Loading updates...</div>}
+      
+      {!loading && anns.length === 0 && (
+        <div className={styles.emptyState}>No announcements at this time.</div>
+      )}
+      
       <div className={styles.list}>
-        {announcements.map(a => (
-          <div key={a.id} className={`${styles.card} ${styles[a.type]}`}>
-            <div className={styles.header}>
-              <Megaphone className={styles.icon} />
-              <h3>{a.title}</h3>
-            </div>
-
+        {!loading && anns.map((a) => (
+            <div key={a.id} className={styles.card}>
+            <h4 className={styles.cardTitle}>{a.title}</h4>
             <p className={styles.message}>{a.message}</p>
-            <p className={styles.date}>{a.date}</p>
-          </div>
+            <span className={styles.date}>{a.date}</span>
+            </div>
         ))}
       </div>
     </div>
   );
-};
-
-export default ClientAnnouncements;
+}

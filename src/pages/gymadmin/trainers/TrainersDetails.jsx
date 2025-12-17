@@ -14,14 +14,26 @@ export default function TrainerDetails(){
 
   useEffect(()=>{ setTrainer(MOCK[trainerId] || null); },[trainerId]);
 
-  if(!trainer) return <p style={{padding:20}}>Trainer not found</p>;
+  if(!trainer) return <div style={{padding: 40, textAlign: 'center', color: '#666'}}>Trainer not found</div>;
 
   return (
     <div className={styles.container}>
-      <h1>{trainer.name}</h1>
-      <p>{trainer.email} • {trainer.phone}</p>
-      <p><strong>Assigned Members:</strong> {trainer.assignedMembers}</p>
-      <div className={styles.card}><h3>Bio</h3><p>{trainer.bio}</p></div>
+      <div className={styles.headerCard}>
+        <h1 className={styles.name}>{trainer.name}</h1>
+        <div className={styles.meta}>
+          <span>{trainer.email}</span>
+          <span>•</span>
+          <span>{trainer.phone}</span>
+        </div>
+        <div className={styles.statsRow}>
+          <p style={{ margin: 0 }}><strong>Assigned Members:</strong> {trainer.assignedMembers}</p>
+        </div>
+      </div>
+      
+      <div className={styles.bioCard}>
+        <h3 className={styles.sectionTitle}>Bio</h3>
+        <p className={styles.text}>{trainer.bio}</p>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,19 @@
 import React from "react";
 import styles from "./ClientProgress.module.css";
+import { BarChart2 } from "lucide-react";
 
 const ClientProgress = () => {
   return (
     <div className={styles.container}>
-      <h2>Progress Tracking</h2>
-      <p>This feature will display charts & analytics from the backend soon.</p>
+      <div className={styles.header}>
+        <h2>Progress Tracking</h2>
+        <p>Track your weight, sets, and reps over time.</p>
+      </div>
 
       <div className={styles.placeholder}>
-        📊 Progress charts coming soon…
+        <BarChart2 size={48} className={styles.icon} />
+        <p>📊 Analytics and progress charts are coming soon!</p>
+        <small>Your trainer is setting up your tracking metrics.</small>
       </div>
     </div>
   );

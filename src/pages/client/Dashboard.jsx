@@ -1,41 +1,52 @@
 import React from "react";
 import styles from "./Dashboard.module.css";
 import { Dumbbell, MessageCircle, ClipboardList, Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ClientDashboard = () => {
+  const navigate = useNavigate();
+
   return (
     <div className={styles.container}>
 
       <div className={styles.headerCard}>
-        <h1>Welcome Back 👋</h1>
-        <p>Your fitness journey continues today!</p>
+        <h1>Welcome Back, Alex 👋</h1>
+        <p>Your fitness journey continues today! Stay consistent.</p>
       </div>
 
       {/* Stats */}
       <div className={styles.statsGrid}>
 
-        <div className={styles.statCard}>
-          <Dumbbell className={styles.icon} />
+        <div className={styles.statCard} onClick={() => navigate('/client/plan')}>
+          <div className={`${styles.iconWrapper} ${styles.blue}`}>
+            <Dumbbell size={24} />
+          </div>
           <h3>Active Plan</h3>
           <p>Strength + Cardio</p>
         </div>
 
         <div className={styles.statCard}>
-          <ClipboardList className={styles.icon} />
+          <div className={`${styles.iconWrapper} ${styles.green}`}>
+             <ClipboardList size={24} />
+          </div>
           <h3>Next Workout</h3>
           <p>Leg Day • Tomorrow</p>
         </div>
 
-        <div className={styles.statCard}>
-          <MessageCircle className={styles.icon} />
+        <div className={styles.statCard} onClick={() => navigate('/client/messages')}>
+          <div className={`${styles.iconWrapper} ${styles.purple}`}>
+             <MessageCircle size={24} />
+          </div>
           <h3>Messages</h3>
-          <p>2 new</p>
+          <p>2 New Messages</p>
         </div>
 
-        <div className={styles.statCard}>
-          <Bell className={styles.icon} />
+        <div className={styles.statCard} onClick={() => navigate('/client/announcements')}>
+          <div className={`${styles.iconWrapper} ${styles.orange}`}>
+             <Bell size={24} />
+          </div>
           <h3>Announcements</h3>
-          <p>No unread</p>
+          <p>No new updates</p>
         </div>
 
       </div>

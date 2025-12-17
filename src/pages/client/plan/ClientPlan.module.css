@@ -1,40 +1,56 @@
 .container {
-  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.title {
-  font-size: 26px;
+.header h1 {
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin: 0;
+  color: var(--text-main);
 }
 
-.trainer {
-  font-size: 15px;
-  color: #555;
-  margin-bottom: 25px;
+.planCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 24px;
 }
 
-.dayCard {
-  background: #fff;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-  margin-bottom: 20px;
-}
-
-.dayTitle {
+.planTitle {
   font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 16px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
 }
 
-.exercise {
-  padding: 12px;
-  background: #f7f9fc;
-  border-radius: 10px;
-  margin-bottom: 12px;
+.planContent {
+  font-family: 'Inter', sans-serif; /* Ensuring it doesn't look like code */
+  white-space: pre-wrap;
+  color: var(--text-main);
+  line-height: 1.6;
+  font-size: 15px;
 }
 
-.exerciseName {
-  font-weight: 600;
+.notes {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius);
+  color: #92400e;
+  font-size: 14px;
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border);
 }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./AddMemberModal.module.css";
+import { X } from "lucide-react";
 
 const AddMemberModal = ({ onClose }) => {
   const [form, setForm] = useState({
@@ -21,35 +22,51 @@ const AddMemberModal = ({ onClose }) => {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h2>Add New Member</h2>
+        <div className={styles.header}>
+          <h2 className={styles.title}>Add New Member</h2>
+          <button onClick={onClose} className={styles.closeBtn}><X size={20} /></button>
+        </div>
 
-        <label>Name</label>
-        <input
-          value={form.name}
-          onChange={(e) => update("name", e.target.value)}
-        />
+        <div className={styles.body}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Name</label>
+            <input
+              className={styles.input}
+              value={form.name}
+              onChange={(e) => update("name", e.target.value)}
+              placeholder="Full Name"
+            />
+          </div>
 
-        <label>Phone</label>
-        <input
-          value={form.phone}
-          onChange={(e) => update("phone", e.target.value)}
-        />
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Phone</label>
+            <input
+              className={styles.input}
+              value={form.phone}
+              onChange={(e) => update("phone", e.target.value)}
+              placeholder="+254..."
+            />
+          </div>
 
-        <label>Subscription Plan</label>
-        <select
-          value={form.plan}
-          onChange={(e) => update("plan", e.target.value)}
-        >
-          <option>Daily</option>
-          <option>Weekly</option>
-          <option>Monthly</option>
-        </select>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Subscription Plan</label>
+            <select
+              className={styles.select}
+              value={form.plan}
+              onChange={(e) => update("plan", e.target.value)}
+            >
+              <option>Daily</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+            </select>
+          </div>
+        </div>
 
-        <div className={styles.actions}>
-          <button className={styles.cancel} onClick={onClose}>
+        <div className={styles.footer}>
+          <button className={styles.cancelBtn} onClick={onClose}>
             Cancel
           </button>
-          <button className={styles.save} onClick={save}>
+          <button className={styles.saveBtn} onClick={save}>
             Save
           </button>
         </div>

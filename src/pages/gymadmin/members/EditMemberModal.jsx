@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import styles from "./AddMemberModal.module.css";
+import styles from "./EditMemberModal.module.css";
+import { X } from "lucide-react";
 
 const EditMemberModal = ({ onClose }) => {
   const [form, setForm] = useState({
@@ -18,17 +19,34 @@ const EditMemberModal = ({ onClose }) => {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h2>Edit Member</h2>
+        <div className={styles.header}>
+          <h2 className={styles.title}>Edit Member</h2>
+          <button onClick={onClose} className={styles.closeBtn}><X size={20} /></button>
+        </div>
 
-        <label>Name</label>
-        <input value={form.name} onChange={(e) => update("name", e.target.value)} />
+        <div className={styles.body}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Name</label>
+            <input 
+              className={styles.input}
+              value={form.name} 
+              onChange={(e) => update("name", e.target.value)} 
+            />
+          </div>
 
-        <label>Phone</label>
-        <input value={form.phone} onChange={(e) => update("phone", e.target.value)} />
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Phone</label>
+            <input 
+              className={styles.input}
+              value={form.phone} 
+              onChange={(e) => update("phone", e.target.value)} 
+            />
+          </div>
+        </div>
 
-        <div className={styles.actions}>
-          <button onClick={onClose} className={styles.cancel}>Cancel</button>
-          <button onClick={save} className={styles.save}>Save</button>
+        <div className={styles.footer}>
+          <button onClick={onClose} className={styles.cancelBtn}>Cancel</button>
+          <button onClick={save} className={styles.saveBtn}>Save</button>
         </div>
       </div>
     </div>

@@ -4,6 +4,10 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
+import "./styles/variables.css";
+import "./styles/theme.css";
+import "./styles/global.css";
+
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
