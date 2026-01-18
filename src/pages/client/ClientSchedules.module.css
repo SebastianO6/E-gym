@@ -1,0 +1,125 @@
+/* Schedule Container */
+.scheduleContainer {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.scheduleContainer h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+/* Empty State */
+.scheduleContainer p {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 32px;
+  margin: 0;
+}
+
+/* Session List */
+.scheduleContainer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Session Item */
+.scheduleContainer li {
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.scheduleContainer li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.scheduleContainer li:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: translateX(4px);
+}
+
+/* Date/Title */
+.scheduleContainer li b {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Status/Time Info */
+.scheduleContainer li div {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Status Indicator Dot */
+.scheduleContainer li div::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+}
+
+/* Notes */
+.scheduleContainer li small {
+  font-size: 13px;
+  color: #9ca3af;
+  display: block;
+  margin-top: 12px;
+  font-style: italic;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scheduleContainer {
+    padding: 24px;
+  }
+
+  .scheduleContainer h2 {
+    font-size: 20px;
+  }
+
+  .scheduleContainer li {
+    padding: 16px;
+  }
+
+  .scheduleContainer li b {
+    font-size: 15px;
+  }
+
+  .scheduleContainer li div {
+    font-size: 13px;
+  }
+}

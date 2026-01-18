@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Dashboard.module.css";
 import { Dumbbell, MessageCircle, ClipboardList, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ClientSchedule from "./clientSchedule";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -50,6 +51,8 @@ const ClientDashboard = () => {
         </div>
 
       </div>
+
+      <ClientSchedule />
 
     </div>
   );

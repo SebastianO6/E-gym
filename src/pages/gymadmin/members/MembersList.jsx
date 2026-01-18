@@ -1,93 +1,94 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./MembersList.module.css";
-import AddMemberModal from "../members/AddMemberModal";
+import AddMemberModal from "./AddMemberModal";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus } from "lucide-react";
-
-const MOCK_MEMBERS = [
-  { id: 1, name: "Samuel Karanja", plan: "Monthly", expires: "2025-03-12", status: "active" },
-  { id: 2, name: "Joyce Mutheu", plan: "Weekly", expires: "2025-02-02", status: "expired" },
-  { id: 3, name: "James Mwangi", plan: "Daily", expires: "2025-01-30", status: "active" },
-];
+import { listMembers } from "../../../services/gymAdminService";
 
 const MembersList = () => {
   const navigate = useNavigate();
-  const [showAdd, setShowAdd] = useState(false);
+  const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
+  const [showAdd, setShowAdd] = useState(false);
+
+  const load = async () => {
+    try {
+      const data = await listMembers();
+      setMembers(data);
+    } catch {
+      setMembers([]);
+    }
+  };
+
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await listMembers();
+        setMembers(data || []);
+      } catch (err) {
+        console.error(err);
+        setMembers([]);
+      }
+    };
+    load();
+  }, []);
 
   const filtered = useMemo(() => {
-    return MOCK_MEMBERS.filter((m) =>
-      m.name.toLowerCase().includes(search.toLowerCase())
+    return members.filter((m) =>
+      (m.email ?? "").toLowerCase().includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [members, search]);
 
   return (
     <div className={styles.container}>
-      {/* Header */}
       <div className={styles.headerRow}>
-        <div>
-          <h1 className={styles.title}>Members</h1>
-          <p className={styles.subtitle}>Manage gym members and subscriptions.</p>
-        </div>
-
-        <button className={styles.addBtn} onClick={() => setShowAdd(true)}>
-          <Plus size={18} />
-          Add Member
+        <h1>Members</h1>
+        <button onClick={() => setShowAdd(true)}>
+          <Plus size={16} /> Add Member
         </button>
       </div>
 
-      {/* Search */}
       <div className={styles.searchWrapper}>
-        <Search size={18} className={styles.searchIcon} />
+        <Search size={18} />
         <input
-          className={styles.searchInput}
-          placeholder="Search members..."
+          placeholder="Search by email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* Table */}
-      <div className={styles.card}>
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Plan</th>
-                <th>Status</th>
-                <th>Expires</th>
-                <th style={{ textAlign: "right" }}>Actions</th>
-              </tr>
-            </thead>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Plan</th>
+            <th>Status</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((m) => (
+            <tr key={m.id}>
+              <td>{m.email}</td>
+              <td>{m.plan}</td>
+              <td>{m.status}</td>
+              <td>
+                <button onClick={() => navigate(`/gymadmin/members/${m.id}`)}>
+                  View
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-            <tbody>
-              {filtered.map((m) => (
-                <tr key={m.id}>
-                  <td style={{ fontWeight: 500 }}>{m.name}</td>
-                  <td>{m.plan}</td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${styles[m.status.toLowerCase()]}`}>
-                      {m.status}
-                    </span>
-                  </td>
-                  <td>{m.expires}</td>
-                  <td style={{ textAlign: "right" }}>
-                    <button
-                      className={styles.viewBtn}
-                      onClick={() => navigate(`/gymadmin/members/${m.id}`)}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {showAdd && <AddMemberModal onClose={() => setShowAdd(false)} />}
+      {showAdd && (
+        <AddMemberModal
+          onClose={() => setShowAdd(false)}
+          onCreated={load}
+        />
+      )}
     </div>
   );
 };

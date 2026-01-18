@@ -1,0 +1,25 @@
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.title {
+  margin-bottom: 12px;
+}
+
+.total {
+  color: #16a34a;
+  margin-bottom: 16px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}

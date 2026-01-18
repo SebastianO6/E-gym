@@ -1,81 +1,304 @@
+/* Main Container */
 .container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
-.header h1 {
-  font-size: 24px;
+/* Page Header */
+.container > h2,
+h2 {
+  font-size: 32px;
   font-weight: 700;
   margin: 0;
-  color: var(--text-main);
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.subtitle {
-  color: var(--text-secondary);
-  font-size: 14px;
-  margin-top: 4px;
+/* Empty State */
+.container > p,
+p {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 15px;
+  padding: 64px 24px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
 }
 
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Table Container */
+.tableWrapper {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  overflow: hidden;
 }
 
-.scheduleCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: all 0.2s;
-  box-shadow: var(--shadow);
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
 }
 
-.scheduleCard:hover {
-  transform: translateX(4px);
-  border-left: 4px solid var(--primary);
+thead {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.timeCol {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.day {
-  font-size: 13px;
+th {
+  padding: 16px 24px;
+  text-align: left;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #6b7280;
+  letter-spacing: 0.05em;
 }
 
-.time {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-main);
+tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s ease;
 }
 
-.infoCol {
-  text-align: right;
+tbody tr:last-child {
+  border-bottom: none;
 }
 
-.member {
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+td {
+  padding: 20px 24px;
+  font-size: 14px;
+  color: #374151;
+  vertical-align: middle;
+}
+
+/* Status Badges */
+td:nth-child(4) {
   font-weight: 600;
-  color: var(--primary);
-  font-size: 16px;
+  text-transform: capitalize;
 }
 
-.type {
+/* Action Buttons Cell */
+td:last-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: none;
+}
+
+/* Button Styles */
+button {
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 13px;
-  color: var(--text-secondary);
-  background: #f3f4f6;
-  padding: 2px 8px;
-  border-radius: 4px;
-  margin-top: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #374151;
+  white-space: nowrap;
+}
+
+button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Complete Button */
+button:nth-child(1) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+button:nth-child(1):hover {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+}
+
+/* Reschedule Button */
+button:nth-child(2) {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border-color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+button:nth-child(2):hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Cancel Button */
+button:nth-child(3) {
+  background: white;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+button:nth-child(3):hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+/* Dash for No Actions */
+span {
+  color: #9ca3af;
+  font-size: 18px;
+}
+
+/* Status Color Coding */
+tbody tr td:nth-child(4) {
+  position: relative;
+}
+
+tbody tr td:nth-child(4)::before {
+  content: '';
   display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Scheduled Status */
+tbody tr:has(td:nth-child(4):contains("scheduled")) td:nth-child(4) {
+  color: #3b82f6;
+}
+
+tbody tr:has(td:nth-child(4):contains("scheduled")) td:nth-child(4)::before {
+  background: #3b82f6;
+}
+
+/* Completed Status */
+tbody tr:has(td:nth-child(4):contains("completed")) td:nth-child(4) {
+  color: #059669;
+}
+
+tbody tr:has(td:nth-child(4):contains("completed")) td:nth-child(4)::before {
+  background: #059669;
+}
+
+/* Cancelled Status */
+tbody tr:has(td:nth-child(4):contains("cancelled")) td:nth-child(4) {
+  color: #dc2626;
+}
+
+tbody tr:has(td:nth-child(4):contains("cancelled")) td:nth-child(4)::before {
+  background: #dc2626;
+}
+
+/* Rescheduled Status */
+tbody tr:has(td:nth-child(4):contains("rescheduled")) td:nth-child(4) {
+  color: #f59e0b;
+}
+
+tbody tr:has(td:nth-child(4):contains("rescheduled")) td:nth-child(4)::before {
+  background: #f59e0b;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 12px 16px;
+  }
+
+  button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  td:last-child {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Stack table for mobile */
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  tr {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: white;
+  }
+
+  td {
+    border: none;
+    position: relative;
+    padding: 12px 12px 12px 45%;
+    text-align: right;
+  }
+
+  td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 12px;
+    width: 40%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #6b7280;
+    text-align: left;
+  }
+
+  td:last-child {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  button {
+    width: 100%;
+  }
 }

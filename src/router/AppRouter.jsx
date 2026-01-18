@@ -22,6 +22,12 @@ import MembersList from "../pages/gymadmin/members/MembersList";
 import MemberDetails from "../pages/gymadmin/members/MemberDetails";
 import TrainersList from "../pages/gymadmin/trainers/TrainersList";
 import TrainerDetails from "../pages/gymadmin/trainers/TrainersDetails";
+import Announcements from "../pages/gymadmin/Announcements";
+import CreateSchedule from "../pages/gymadmin/CreateSchedule";
+import TrainerSchedules from "../pages/gymadmin/TrainerSchedules";
+import ForcePasswordChange from "../pages/auth/ForcePasswordChange"; // ✅ Changed path
+import GymAdminSettings from "../pages/gymadmin/settings/GymAdminSettings"; // ✅ Added
+import RevenueDashboard from "../pages/gymadmin/RevenueDashboard"; // ✅ Keep this
 
 /* ============================
    TRAINER
@@ -43,8 +49,8 @@ import ChatWindow from "../pages/trainer/messages/ChatWindow";
 import ClientDashboard from "../pages/client/Dashboard";
 import ClientPlan from "../pages/client/plan/ClientPlan";
 import ClientProgress from "../pages/client/ClientProgress";
-
-// Corrected imports
+import ClientSchedule from "../pages/client/clientSchedule";
+import Settings from "../pages/client/settings/Settings";
 import ClientMessages from "../pages/client/messages/ClientMessages";
 import ClientAnnouncements from "../pages/client/messages/announcements/ClientAnnouncements";
 
@@ -53,11 +59,13 @@ import ClientAnnouncements from "../pages/client/messages/announcements/ClientAn
 export default function AppRouter() {
   return (
     <Routes>
-
       {/* DEFAULT REDIRECT */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      
+      {/* ✅ FORCE PASSWORD CHANGE (Standalone route for all roles) */}
+      <Route path="/force-password-change" element={<ForcePasswordChange />} />
 
       {/* ============================
           SUPERADMIN ROUTES
@@ -73,6 +81,8 @@ export default function AppRouter() {
         <Route index element={<SA_Dashboard />} />
         <Route path="gyms" element={<SA_AllGyms />} />
         <Route path="gyms/:gymId" element={<SA_GymDetails />} />
+        {/* ✅ You might want to add superadmin settings later */}
+        {/* <Route path="settings" element={<SuperadminSettings />} /> */}
       </Route>
 
       {/* ============================
@@ -95,6 +105,20 @@ export default function AppRouter() {
         {/* Trainer management */}
         <Route path="trainers" element={<TrainersList />} />
         <Route path="trainers/:trainerId" element={<TrainerDetails />} />
+
+        {/* Announcements */}
+        <Route path="announcements" element={<Announcements />} />
+        
+        {/* Schedule management */}
+        <Route path="schedules" element={<TrainerSchedules />} />
+        <Route path="schedules/new" element={<CreateSchedule />} />
+        <Route path="schedules/create" element={<CreateSchedule />} />
+        
+        {/* ✅ GYM ADMIN SETTINGS (moved inside Layout) */}
+        <Route path="settings" element={<GymAdminSettings />} />
+        
+        {/* ✅ REVENUE (moved inside Layout) */}
+        <Route path="revenue" element={<RevenueDashboard />} />
       </Route>
 
       {/* ============================
@@ -119,6 +143,9 @@ export default function AppRouter() {
           <Route index element={<MessagesList />} />
           <Route path=":memberId" element={<ChatWindow />} />
         </Route>
+        
+        {/* ✅ You might want to add trainer settings later */}
+        {/* <Route path="settings" element={<TrainerSettings />} /> */}
       </Route>
 
       {/* ============================
@@ -137,6 +164,8 @@ export default function AppRouter() {
         <Route path="progress" element={<ClientProgress />} />
         <Route path="messages" element={<ClientMessages />} />
         <Route path="announcements" element={<ClientAnnouncements />} />
+        <Route path="schedule" element={<ClientSchedule />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
 
       {/* NOT FOUND */}

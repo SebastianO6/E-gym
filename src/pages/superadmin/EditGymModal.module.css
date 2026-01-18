@@ -115,22 +115,22 @@
 
 .cancelBtn {
   padding: 8px 16px;
-  background: white;
+  background: rgb(233, 101, 101);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-weight: 500;
   color: var(--text-main);
   cursor: pointer;
 }
-.cancelBtn:hover { background: #f3f4f6; }
+.cancelBtn:hover { background: #c9c0bf; }
 
 .saveBtn {
   padding: 8px 16px;
-  background: var(--primary);
+  background: rgb(1, 187, 1);
   border: none;
   border-radius: var(--radius);
   font-weight: 500;
-  color: white;
+  color: rgb(0, 0, 0);
   cursor: pointer;
 }
-.saveBtn:hover { background: var(--primary-hover); }
+.saveBtn:hover { background: rgb(196, 209, 191); }

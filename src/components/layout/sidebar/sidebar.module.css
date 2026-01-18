@@ -81,3 +81,16 @@
   align-items: center;
   font-weight: bold;
 }
+
+.logoutItem {
+  margin-top: auto; /* Push to bottom */
+  margin-bottom: 20px;
+  color: #ef4444; /* Red color for logout */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+}
+
+.logoutItem:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}

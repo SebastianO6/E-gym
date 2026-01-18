@@ -80,16 +80,17 @@
   border-color: var(--border);
   color: var(--text-main);
 }
-.btnEdit:hover { background: #f9fafb; }
+.btnEdit:hover { background: #7e8b97; color: white; }
 
 .btnAction {
   color: white;
   border: none;
 }
-.btnSuspend { background: var(--warning); color: white; }
+.btnSuspend { background: rgb(231, 105, 105); color: white; }
 .btnActivate { background: var(--success); }
 .btnDelete { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
 .btnDelete:hover { background: #fee2e2; }
+.btnSuspend:hover { background-color: white; color: black;}
 
 /* Stats */
 .statsGrid {

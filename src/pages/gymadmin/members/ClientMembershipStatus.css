@@ -1,0 +1,22 @@
+.card {
+  padding: 16px;
+  border-radius: 10px;
+}
+
+.active {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+}
+
+.expired {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.warning {
+  color: #dc2626;
+}
+
+.ok {
+  color: #16a34a;
+}

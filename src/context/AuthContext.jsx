@@ -1,4 +1,4 @@
-// src/context/AuthContext.jsx
+// src/context/AuthContext.jsx - FIXED VERSION
 import React, {
   createContext,
   useState,
@@ -7,11 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import {
-  getAuthLocal,
-  setAuthLocal,
-  clearAuth,
-} from "./authLocal";
+import { setAuth, getCurrentUser, clearAuth, getAuthToken } from "../utils/authLocal"; // ✅ Use utils version
 import { connectSocket } from "../socket";
 
 const AuthContext = createContext(null);
@@ -19,29 +15,29 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  // hydrate auth from localStorage
-  const [auth, setAuth] = useState(() => getAuthLocal());
-  const [loading, setLoading] = useState(false);
+  // ✅ Use getCurrentUser instead of getAuthLocal
+  const [auth, setAuthState] = useState(() => {
+    const user = getCurrentUser();
+    const token = getAuthToken();
+    const mustChangePassword =
+      localStorage.getItem("egym_must_change_password") === "true";
 
-  /* ----------------------------------------------------
-     Sync auth state if localStorage changes (multi-tab)
-  ---------------------------------------------------- */
-  useEffect(() => {
-    const onStorage = () => {
-      setAuth(getAuthLocal());
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    return token && user
+      ? { accessToken: token, user, mustChangePassword }
+      : null;
+  });
+
+  
+  const [loading, setLoading] = useState(false);
 
   /* ----------------------------------------------------
      Auto-connect socket when authenticated
   ---------------------------------------------------- */
   useEffect(() => {
-    if (auth?.accessToken) {
+    if (auth?.accessToken && !auth?.mustChangePassword) {
       connectSocket();
     }
-  }, [auth?.accessToken]);
+  }, [auth?.accessToken, auth?.mustChangePassword]);
 
   /* ----------------------------------------------------
      LOGIN
@@ -53,44 +49,82 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post("/auth/login", { email, password });
       const data = res.data;
 
-      const payload = {
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        user: data.user,
-      };
+      // ✅ Use setAuth from utils/authLocal.js
+      setAuth({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        user: data.user
+      });
 
-      setAuthLocal(payload);
-      setAuth(payload);
+      // ✅ STORE PASSWORD FLAG SEPARATELY
+      localStorage.setItem(
+        "egym_must_change_password",
+        data.must_change_password ? "true" : "false"
+      );
+
+
+
+      // Set local auth state
+      const authState = {
+        accessToken: data.access_token,
+        user: data.user,
+        mustChangePassword: data.must_change_password || false
+      };
+      
+      setAuthState(authState);
+
+      // Check if user must change password
+      if (data.must_change_password) {
+        navigate("/force-password-change");
+        return;
+      }
 
       redirectByRole(data.user?.role);
     } catch (err) {
-      /**
-       * DEV FALLBACK (only if backend unreachable)
-       * Keeps your current DX intact
-       */
-      if (!err.response) {
-        const mockRole =
-          email.includes("super") ? "superadmin" :
-          email.includes("gym") ? "gymadmin" :
-          email.includes("train") ? "trainer" :
-          "client";
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const payload = {
-          accessToken: "MOCK_TOKEN",
-          refreshToken: "MOCK_REFRESH",
-          user: {
-            id: "mock-1",
-            email,
-            role: mockRole,
-          },
-        };
+  /* ----------------------------------------------------
+     FORCE PASSWORD CHANGE
+  ---------------------------------------------------- */
+  const forceChangePassword = async (newPassword) => {
+    setLoading(true);
+    try {
+      await api.put("/auth/force-change-password", {
+        new_password: newPassword
+      });
+      
+      // Update user in localStorage
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        currentUser.must_change_password = false; 
+        setAuth({
+          access_token: getAuthToken(),
+          user: currentUser
+        });
 
-        setAuthLocal(payload);
-        setAuth(payload);
-        redirectByRole(mockRole);
-      } else {
-        throw err;
+        localStorage.setItem("egym_must_change_password", "false");
+
       }
+      
+      // Update local state
+      setAuthState(prev => ({
+        ...prev,
+        mustChangePassword: false
+      }));
+      
+      // Redirect
+      redirectByRole(auth?.user?.role);
+      
+      return { success: true };
+    } catch (err) {
+      return { 
+        success: false, 
+        error: err.response?.data?.error || "Failed to change password" 
+      };
     } finally {
       setLoading(false);
     }
@@ -101,9 +135,11 @@ export const AuthProvider = ({ children }) => {
   ---------------------------------------------------- */
   const logout = () => {
     clearAuth();
-    setAuth(null);
+    localStorage.removeItem("egym_must_change_password"); // ✅ ADD THIS
+    setAuthState(null);
     navigate("/login");
   };
+
 
   /* ----------------------------------------------------
      HELPERS
@@ -116,15 +152,35 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAuthenticated = Boolean(auth?.accessToken);
+  const requiresPasswordChange = auth?.mustChangePassword === true;
 
   return (
     <AuthContext.Provider
       value={{
         auth,
-        setAuth,
+        setAuth: setAuthState,
         login,
         logout,
+        forceChangePassword,
+        changePassword: async (currentPassword, newPassword) => {
+          setLoading(true);
+          try {
+            await api.put("/auth/change-password", {
+              current_password: currentPassword,
+              new_password: newPassword
+            });
+            return { success: true };
+          } catch (err) {
+            return { 
+              success: false, 
+              error: err.response?.data?.error || "Failed to change password" 
+            };
+          } finally {
+            setLoading(false);
+          }
+        },
         isAuthenticated,
+        requiresPasswordChange,
         loading,
       }}
     >

@@ -1,37 +1,97 @@
-import React from "react";
-import styles from "./TrainerSchedule.module.css";
-import { Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  listTrainerSchedules,
+  updateSchedule
+} from "../../../services/trainerServiceSchedule";
+import RescheduleModal from "./RescheduleModal";
 
-// MOCK schedule
-const MOCK = [
-  { id:1, day: "Monday", time: "09:00 AM", member: "Alex Johnson", type: "1-on-1 Training" },
-  { id:2, day: "Monday", time: "11:00 AM", member: "Maria Gomez", type: "Consultation" },
-  { id:3, day: "Tuesday", time: "02:00 PM", member: "David Lee", type: "HIIT Session" },
-  { id:4, day: "Wednesday", time: "10:00 AM", member: "Sarah Connor", type: "Strength Training" },
-];
+const TrainerSchedule = () => {
+  const [sessions, setSessions] = useState([]);
+  const [rescheduling, setRescheduling] = useState(null);
 
-export default function TrainerSchedule(){
+  const load = async () => {
+    try {
+      const data = await listTrainerSchedules();
+      setSessions(Array.isArray(data) ? data : []);
+    } catch {
+      setSessions([]);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const markCompleted = async (id) => {
+    await updateSchedule(id, { status: "completed" });
+    load();
+  };
+
+  const cancelSession = async (id) => {
+    await updateSchedule(id, { status: "cancelled" });
+    load();
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>Weekly Schedule</h1>
-        <p className={styles.subtitle}>Upcoming sessions for this week.</p>
-      </div>
+    <div>
+      <h2>My Weekly Schedule</h2>
 
-      <div className={styles.list}>
-        {MOCK.map(s => (
-          <div key={s.id} className={styles.scheduleCard}>
-            <div className={styles.timeCol}>
-              <span className={styles.day}>{s.day}</span>
-              <span className={styles.time}>{s.time}</span>
-            </div>
-            <div className={styles.infoCol}>
-              <div className={styles.member}>{s.member}</div>
-              <div className={styles.type}>{s.type}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {sessions.length === 0 && <p>No sessions scheduled.</p>}
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th />
+          </tr>
+        </thead>
+
+        <tbody>
+          {sessions.map(s => (
+            <tr key={s.id}>
+              <td>{s.workout_date}</td>
+              <td>{s.member_name}</td>
+              <td>
+                {s.start_time
+                  ? `${s.start_time} - ${s.end_time}`
+                  : "—"}
+              </td>
+              <td>{s.status}</td>
+              <td>
+                {s.status === "scheduled" ||
+                s.status === "rescheduled" ? (
+                  <>
+                    <button onClick={() => markCompleted(s.id)}>
+                      Complete
+                    </button>
+                    <button onClick={() => setRescheduling(s)}>
+                      Reschedule
+                    </button>
+                    <button onClick={() => cancelSession(s.id)}>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <span>—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {rescheduling && (
+        <RescheduleModal
+          session={rescheduling}
+          onClose={() => setRescheduling(null)}
+          onUpdated={load}
+        />
+      )}
     </div>
   );
-}
+};
+
+export default TrainerSchedule;

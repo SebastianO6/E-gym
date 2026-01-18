@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Dashboard.module.css";
 import { useNavigate } from "react-router-dom";
 import { Users, FileText, Calendar, MessageSquare, Clock, Plus, ChevronRight } from "lucide-react";
+import TrainerWeeklySchedule from "./schedule/TrainerWeeklySchedule";
 
 const TrainerDashboard = () => {
   const navigate = useNavigate();
@@ -26,6 +27,8 @@ const TrainerDashboard = () => {
         <h1>Trainer Dashboard</h1>
         <p className={styles.subtitle}>Overview of your training activity and schedule.</p>
       </div>
+
+      <TrainerWeeklySchedule />
 
       {/* Stats Grid */}
       <div className={styles.statsGrid}>

@@ -82,9 +82,13 @@
   border: none;
   border-radius: var(--radius);
   font-weight: 500;
-  color: white;
+  color: rgb(51, 51, 51);
   cursor: pointer;
+  background: rgb(255, 0, 0);
 }
+
+.confirmBtn:hover {color: rgb(107, 105, 105);}
+
 .confirmBtnDanger { background: var(--danger); }
 .confirmBtnDanger:hover { background: #dc2626; }
 .confirmBtnInfo { background: var(--primary); }

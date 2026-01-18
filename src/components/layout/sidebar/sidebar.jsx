@@ -1,13 +1,24 @@
-// src/components/layout/sidebar/sidebar.jsx
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./sidebar.module.css";
-import { LayoutDashboard, Users, Building2, Bell, Settings, Menu, X, TrendingUp } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Building2, 
+  Bell, 
+  Settings, 
+  Menu, 
+  X, 
+  TrendingUp,
+  LogOut  // ✅ Add this import
+} from "lucide-react";
+import { useAuth } from "../../../context/AuthContext";  // ✅ Import auth context
 
 const Sidebar = ({ userRole }) => {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();  // ✅ Get logout function
 
   const menuItemsByRole = {
     superadmin: [
@@ -20,6 +31,7 @@ const Sidebar = ({ userRole }) => {
     gymadmin: [
       { label: "Dashboard", icon: LayoutDashboard, to: "/gymadmin" },
       { label: "Clients", icon: Users, to: "/gymadmin/members" },
+      { label: "Trainers", icon: Users, to: "/gymadmin/trainers" }, 
       { label: "Announcements", icon: Bell, to: "/gymadmin/announcements" },
       { label: "Settings", icon: Settings, to: "/gymadmin/settings" },
     ],
@@ -34,11 +46,18 @@ const Sidebar = ({ userRole }) => {
       { label: "Dashboard", icon: LayoutDashboard, to: "/client" },
       { label: "My Plan", icon: TrendingUp, to: "/client/plan" },
       { label: "Messages", icon: Bell, to: "/client/messages" },
+      { label: "My Schedule", icon: Bell, to: "/client/schedule" },
       { label: "Announcements", icon: Bell, to: "/client/announcements" },
+      { label: "Settings", icon: Settings, to: "/client/settings" }, 
     ],
   };
 
   const navItems = menuItemsByRole[userRole] || [];
+
+  // ✅ Handle logout
+  const handleLogout = () => {
+    logout();  // This will clear auth and redirect to login
+  };
 
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.closed}`}>
@@ -53,12 +72,25 @@ const Sidebar = ({ userRole }) => {
         {navItems.map(({ label, icon: Icon, to }) => {
           const active = location.pathname.startsWith(to);
           return (
-            <div key={to} className={`${styles.navItem} ${active ? styles.active : ""}`} onClick={() => navigate(to)}>
+            <div 
+              key={to} 
+              className={`${styles.navItem} ${active ? styles.active : ""}`} 
+              onClick={() => navigate(to)}
+            >
               <Icon size={20} />
               {open && <span>{label}</span>}
             </div>
           );
         })}
+        
+        {/* ✅ Logout Button - Always visible at bottom */}
+        <div 
+          className={`${styles.navItem} ${styles.logoutItem}`} 
+          onClick={handleLogout}
+        >
+          <LogOut size={20} />
+          {open && <span>Logout</span>}
+        </div>
       </nav>
 
       {open && (

@@ -1,5 +1,6 @@
+// src/api/axios.js - FIXED VERSION
 import axios from "axios";
-import { getAuthToken, clearAuth } from "../context/authLocal";
+import { getAuthToken, clearAuth } from "../utils/authLocal"; // ✅ Use utils version
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -14,6 +15,9 @@ api.interceptors.request.use(
     const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("Axios adding token to request:", token.substring(0, 20) + "...");
+    } else {
+      console.warn("No auth token found for axios request");
     }
     return config;
   },

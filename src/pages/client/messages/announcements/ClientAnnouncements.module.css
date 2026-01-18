@@ -1,61 +1,137 @@
+/* Main Container */
 .container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
+/* Page Title */
 .title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   margin: 0;
-  color: var(--text-main);
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
+/* Empty State */
+.emptyState {
+  background: white;
+  padding: 64px 32px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 15px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Announcements List */
 .list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
+/* Announcement Card */
 .card {
-  padding: 20px;
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--primary);
-  transition: transform 0.2s;
+  background: white;
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateX(4px);
+  box-shadow: 0 8px 20px -4px rgb(0 0 0 / 0.1);
+  border-color: #d1d5db;
 }
 
+/* Card Title */
 .cardTitle {
+  font-size: 20px;
+  font-weight: 700;
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-main);
+  color: #111827;
+  letter-spacing: -0.01em;
 }
 
+/* Message Content */
 .message {
-  margin: 8px 0;
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
 }
 
+/* Date */
 .date {
-  font-size: 12px;
-  color: var(--text-light);
-  display: block;
-  margin-top: 12px;
+  font-size: 13px;
+  color: #9ca3af;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
 }
 
-.emptyState {
-  padding: 40px;
+.date::before {
+  content: '📅';
+  font-size: 14px;
+}
+
+/* Loading State */
+.container > div:first-child {
   text-align: center;
-  color: var(--text-secondary);
-  font-style: italic;
+  padding: 64px 24px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .cardTitle {
+    font-size: 18px;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+
+  .emptyState {
+    padding: 48px 24px;
+  }
 }
