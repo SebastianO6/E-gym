@@ -19,9 +19,22 @@ export default function Login() {
     }
 
     try {
-      await login({ email, password });
+      const res = await login({ email, password });
+
+      // Handle temporary password flow
+      if (res?.must_change_password) {
+        // Save temp token and redirect to ForcePasswordChange page
+        localStorage.setItem("egym_temp_token", res.temp_token);
+        localStorage.setItem("egym_must_change_password", "true");
+      if (res.user?.role) {
+        localStorage.setItem("egym_role", res.user.role);
+      }
+        window.location.href = "/force-change-password";
+        return;
+      }
+
     } catch (err) {
-      setError("Invalid credentials or network error.");
+      setError(err?.response?.data?.message || "Invalid credentials or network error.");
     }
   }
 

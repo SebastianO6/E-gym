@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listTrainers, assignTrainer } from "../../../services/gymAdminService";
+import { listTrainers, assignTrainerToMember } from "../../../services/gymAdminService";
 
 export default function AssignTrainerModal({ member, onClose, onDone }) {
   const [trainers, setTrainers] = useState([]);
@@ -11,7 +11,7 @@ export default function AssignTrainerModal({ member, onClose, onDone }) {
 
   const save = async () => {
     if (!trainerId) return alert("Select a trainer");
-    await assignTrainer(member.id, trainerId);
+    await assignTrainerToMember(member.id, trainerId);
     onDone?.();
     onClose();
   };

@@ -1,6 +1,5 @@
-// src/api/axios.js - FIXED VERSION
 import axios from "axios";
-import { getAuthToken, clearAuth } from "../utils/authLocal"; // ✅ Use utils version
+import { getAuthToken, clearAuth } from "../utils/authLocal";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
@@ -12,28 +11,45 @@ const api = axios.create({
 ------------------------------ */
 api.interceptors.request.use(
   (config) => {
+    const mustChange = localStorage.getItem("egym_must_change_password") === "true";
+
+    // 🔐 FORCE PASSWORD CHANGE MODE
+    if (mustChange) {
+      const tempToken = localStorage.getItem("egym_temp_token");
+
+      // Only allow force-change endpoint
+      if (config.url.includes("/auth/force-change-password")) {
+        config.headers.Authorization = `Bearer ${tempToken}`;
+      }
+
+      return config; // block everything else
+    }
+
+    // 🔓 NORMAL MODE
     const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Axios adding token to request:", token.substring(0, 20) + "...");
-    } else {
-      console.warn("No auth token found for axios request");
     }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 /* ------------------------------
-   RESPONSE: handle 401 globally
+   RESPONSE: auth failures
 ------------------------------ */
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const status = err.response?.status;
+
+    // 🔒 Invalid / expired / malformed JWT
+    if (status === 401 || status === 422) {
       clearAuth();
       window.location.href = "/login";
     }
+
     return Promise.reject(err);
   }
 );

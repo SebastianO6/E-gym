@@ -4,18 +4,15 @@ import { Search, Plus, Trash2, Eye } from "lucide-react";
 import AddGymModal from "./AddGymModal/AddGymModal";
 import ConfirmationModal from "./common/ConfirmationModal";
 import styles from "./AllGyms.module.css";
-import {
-  getAllGyms,
-  createGym,
-  deleteGym,
-} from "../../services/superadminService";
+import { getAllGyms } from "../../services/superadminService";
+import api from "../../api/axios";
 
 const AllGyms = () => {
   const navigate = useNavigate();
   const [gyms, setGyms] = useState([]);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
     loadGyms();
@@ -23,27 +20,30 @@ const AllGyms = () => {
 
   const loadGyms = async () => {
     const data = await getAllGyms();
-    setGyms(data);
+    setGyms(Array.isArray(data) ? data : []);
   };
 
-  const handleCreateGym = async (payload) => {
-    await createGym(payload);
-    loadGyms();
+  const handleGymCreated = (gym) => {
+    setGyms((prev) => [...prev, gym]);
+    setShowModal(false);
   };
 
   const confirmDeleteGym = async () => {
-    await deleteGym(confirmDelete.id);
-    setConfirmDelete({ open: false, id: null });
-    loadGyms();
+    await api.delete(`/superadmin/gyms/${confirmDelete}`);
+    setGyms((prev) => prev.filter((g) => g?.id !== confirmDelete));
+    setConfirmDelete(null);
   };
 
-  const filteredGyms = useMemo(
-    () =>
-      gyms.filter((g) =>
+  // ✅ SAFE FILTER (FIXES CRASH)
+  const filteredGyms = useMemo(() => {
+    const safeGyms = Array.isArray(gyms) ? gyms : [];
+    return safeGyms.filter(
+      (g) =>
+        g &&
+        g.name &&
         g.name.toLowerCase().includes(search.toLowerCase())
-      ),
-    [gyms, search]
-  );
+    );
+  }, [gyms, search]);
 
   return (
     <div className={styles.container}>
@@ -76,11 +76,11 @@ const AllGyms = () => {
           {filteredGyms.map((g) => (
             <tr key={g.id}>
               <td>{g.name}</td>
-              <td>{g.owner_email}</td>
+              <td>{g.owner_email || "-"}</td>
               <td>{g.status || "active"}</td>
-              <td>
+              <td className={styles.actions}>
                 <Eye onClick={() => navigate(`/superadmin/gyms/${g.id}`)} />
-                <Trash2 onClick={() => setConfirmDelete({ open: true, id: g.id })} />
+                <Trash2 onClick={() => setConfirmDelete(g.id)} />
               </td>
             </tr>
           ))}
@@ -90,17 +90,17 @@ const AllGyms = () => {
       {showModal && (
         <AddGymModal
           onClose={() => setShowModal(false)}
-          onCreate={handleCreateGym}
+          onCreate={handleGymCreated}
         />
       )}
 
       <ConfirmationModal
-        isOpen={confirmDelete.open}
+        isOpen={Boolean(confirmDelete)}
         title="Delete Gym"
         message="This action cannot be undone."
         confirmLabel="Delete"
         onConfirm={confirmDeleteGym}
-        onCancel={() => setConfirmDelete({ open: false, id: null })}
+        onCancel={() => setConfirmDelete(null)}
         type="danger"
       />
     </div>

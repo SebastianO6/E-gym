@@ -24,3 +24,12 @@ export async function me() {
   const res = await api.get("/auth/me");
   return res.data;
 }
+
+// =========================
+// AUTH INVITES
+// =========================
+export const acceptInvite = async (token, password) => {
+  const res = await api.post("/auth/accept-invite", { token, password });
+  return res.data;
+};
+

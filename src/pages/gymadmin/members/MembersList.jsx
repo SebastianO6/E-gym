@@ -11,32 +11,23 @@ const MembersList = () => {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
 
-  const load = async () => {
+  const loadMembers = async () => {
     try {
       const data = await listMembers();
-      setMembers(data);
-    } catch {
+      setMembers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Load members failed:", err);
       setMembers([]);
     }
   };
 
-
   useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await listMembers();
-        setMembers(data || []);
-      } catch (err) {
-        console.error(err);
-        setMembers([]);
-      }
-    };
-    load();
+    loadMembers();
   }, []);
 
   const filtered = useMemo(() => {
     return members.filter((m) =>
-      (m.email ?? "").toLowerCase().includes(search.toLowerCase())
+      (m?.email || "").toLowerCase().includes(search.toLowerCase())
     );
   }, [members, search]);
 
@@ -86,7 +77,7 @@ const MembersList = () => {
       {showAdd && (
         <AddMemberModal
           onClose={() => setShowAdd(false)}
-          onCreated={load}
+          onCreated={loadMembers}
         />
       )}
     </div>

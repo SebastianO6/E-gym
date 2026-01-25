@@ -23,13 +23,14 @@ export const createGym = async (payload) => {
   return res.data;
 };
 
-export const deleteGym = async (gymId) => {
-  const res = await api.delete(`/superadmin/gyms/${gymId}`);
-  return res.data;
-};
 
 export const getPlatformRevenue = async () => {
   const res = await api.get("/superadmin/revenue");
   return res.data;
 };
+
+
+export const deleteGym = (gymId) =>
+  api.delete(`/superadmin/gyms/${gymId}`);
+
 

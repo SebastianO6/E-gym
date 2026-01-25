@@ -16,14 +16,15 @@ const EditGymModal = ({ onClose, gym, onSave }) => {
     if (gym) {
       setForm({
         name: gym.name || "",
-        ownerName: (gym.owner && gym.owner.name) || "",
-        ownerEmail: (gym.owner && gym.owner.email) || "",
-        phone: (gym.owner && gym.owner.phone) || "",
+        ownerName: "",
+        ownerEmail: gym.owner_email || "",
+        phone: gym.phone || "",
         address: gym.address || "",
-        status: gym.status || "active",
+        status: "active",
       });
     }
   }, [gym]);
+
 
   const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 

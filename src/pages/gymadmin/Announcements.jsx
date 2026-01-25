@@ -106,8 +106,18 @@ const Announcements = () => {
     }
 
     // Validate gym_id - ensure it's a valid number
-    const gymIdToUse = formData.gym_id ? parseInt(formData.gym_id, 10) : userGymId;
-    
+    const gymIdToUse = formData.gym_id
+      ? parseInt(formData.gym_id, 10)
+      : userGymId;
+
+    const payload = {
+      title: formData.title.trim(),
+      message: formData.message.trim(),
+      tag: formData.tag,
+      gym_id: gymIdToUse
+    };
+
+
     if (!gymIdToUse || isNaN(gymIdToUse)) {
       setError("Invalid gym ID. Please enter a valid gym ID.");
       return;

@@ -21,17 +21,26 @@ const GymDetails = () => {
 
   return (
     <div className={styles.container}>
-      <button onClick={() => navigate("/superadmin/gyms")}>← Back</button>
-      <h1>{gym.name}</h1>
+      <button className={styles.backBtn} onClick={() => navigate("/superadmin/gyms")}>
+        ← Back
+      </button>
 
-      <p><b>Owner Email:</b> {gym.owner_email}</p>
-      <p><b>Phone:</b> {gym.phone}</p>
-      <p><b>Address:</b> {gym.address}</p>
+      <h1 className={styles.title}>{gym.name}</h1>
 
-      <p style={{ opacity: 0.6 }}>
-        Revenue, members & subscriptions will auto-populate once aggregation is enabled.
+      <div className={styles.card}>
+        <div><span>Owner Email</span><strong>{gym.owner_email || "Not assigned"}</strong></div>
+        <div><span>Location</span><strong>{gym.address || "N/A"}</strong></div>
+        <div><span>Members</span><strong>{gym.members}</strong></div>
+        <div><span>Monthly Revenue</span>
+          <strong>KES {gym.monthly_revenue_ksh.toLocaleString()}</strong>
+        </div>
+      </div>
+
+      <p className={styles.note}>
+        Revenue, members & subscriptions auto-update as activity increases.
       </p>
     </div>
+
   );
 };
 

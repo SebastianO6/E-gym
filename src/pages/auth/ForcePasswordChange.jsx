@@ -1,4 +1,3 @@
-// src/components/auth/ForcePasswordChange.jsx
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Eye, EyeOff, Shield, CheckCircle, AlertCircle } from 'lucide-react';
@@ -39,6 +38,22 @@ const ForcePasswordChange = () => {
     
     if (result.success) {
       setSuccess("Password changed successfully! Redirecting to dashboard...");
+
+      // Remove temp token and store real tokens
+      localStorage.removeItem("egym_temp_token");
+      localStorage.removeItem("egym_must_change_password");
+      localStorage.setItem("egym_token", result.access_token);
+      localStorage.setItem("egym_refresh", result.refresh_token);
+
+      // Role may or may not be returned — do NOT assume
+      if (result.user?.role) {
+        localStorage.setItem("egym_role", result.user.role);
+      }
+
+
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
     } else {
       setError(result.error);
     }

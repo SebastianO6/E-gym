@@ -28,6 +28,7 @@ import TrainerSchedules from "../pages/gymadmin/TrainerSchedules";
 import ForcePasswordChange from "../pages/auth/ForcePasswordChange"; // ✅ Changed path
 import GymAdminSettings from "../pages/gymadmin/settings/GymAdminSettings"; // ✅ Added
 import RevenueDashboard from "../pages/gymadmin/RevenueDashboard"; // ✅ Keep this
+import AcceptInvite from "../pages/auth/AcceptInvite";
 
 /* ============================
    TRAINER
@@ -62,6 +63,8 @@ export default function AppRouter() {
       {/* DEFAULT REDIRECT */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/accept-invite" element={<AcceptInvite />} />
+
       <Route path="/unauthorized" element={<Unauthorized />} />
       
       {/* ✅ FORCE PASSWORD CHANGE (Standalone route for all roles) */}

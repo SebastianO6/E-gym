@@ -27,6 +27,13 @@ export const AuthProvider = ({ children }) => {
       : null;
   });
 
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    setInitialized(true);
+  }, []);
+
+
   
   const [loading, setLoading] = useState(false);
 
@@ -43,92 +50,85 @@ export const AuthProvider = ({ children }) => {
      LOGIN
   ---------------------------------------------------- */
   const login = async ({ email, password }) => {
-    setLoading(true);
+  setLoading(true);
+  try {
+    const res = await api.post("/auth/login", { email, password });
+    const data = res.data;
 
-    try {
-      const res = await api.post("/auth/login", { email, password });
-      const data = res.data;
+    // 🔒 FORCE PASSWORD CHANGE FLOW
+    if (data.must_change_password) {
+      localStorage.setItem("egym_temp_token", data.temp_token);
+      localStorage.setItem("egym_must_change_password", "true");
 
-      // ✅ Use setAuth from utils/authLocal.js
-      setAuth({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
-        user: data.user
+      setAuthState({
+        accessToken: data.temp_token,
+        user: data.user,
+        mustChangePassword: true
       });
 
-      // ✅ STORE PASSWORD FLAG SEPARATELY
-      localStorage.setItem(
-        "egym_must_change_password",
-        data.must_change_password ? "true" : "false"
-      );
-
-
-
-      // Set local auth state
-      const authState = {
-        accessToken: data.access_token,
-        user: data.user,
-        mustChangePassword: data.must_change_password || false
-      };
-      
-      setAuthState(authState);
-
-      // Check if user must change password
-      if (data.must_change_password) {
-        navigate("/force-password-change");
-        return;
-      }
-
-      redirectByRole(data.user?.role);
-    } catch (err) {
-      throw err;
-    } finally {
-      setLoading(false);
+      navigate("/force-password-change");
+      return;
     }
-  };
+
+    // ✅ NORMAL LOGIN
+    setAuth({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      user: data.user
+    });
+
+    localStorage.setItem("egym_must_change_password", "false");
+
+    setAuthState({
+      accessToken: data.access_token,
+      user: data.user,
+      mustChangePassword: false
+    });
+
+    redirectByRole(data.user.role);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   /* ----------------------------------------------------
      FORCE PASSWORD CHANGE
   ---------------------------------------------------- */
-  const forceChangePassword = async (newPassword) => {
-    setLoading(true);
-    try {
-      await api.put("/auth/force-change-password", {
-        new_password: newPassword
-      });
-      
-      // Update user in localStorage
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        currentUser.must_change_password = false; 
-        setAuth({
-          access_token: getAuthToken(),
-          user: currentUser
-        });
+const forceChangePassword = async (newPassword) => {
+  setLoading(true);
+  try {
+    const res = await api.put("/auth/force-change-password", {
+      new_password: newPassword
+    });
 
-        localStorage.setItem("egym_must_change_password", "false");
+    // 🔑 STORE REAL TOKENS
+    setAuth({
+      access_token: res.data.access_token,
+      refresh_token: res.data.refresh_token,
+      user: res.data.user
+    });
 
-      }
-      
-      // Update local state
-      setAuthState(prev => ({
-        ...prev,
-        mustChangePassword: false
-      }));
-      
-      // Redirect
-      redirectByRole(auth?.user?.role);
-      
-      return { success: true };
-    } catch (err) {
-      return { 
-        success: false, 
-        error: err.response?.data?.error || "Failed to change password" 
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
+    localStorage.removeItem("egym_temp_token");
+    localStorage.setItem("egym_must_change_password", "false");
+
+    setAuthState({
+      accessToken: res.data.access_token,
+      user: res.data.user,
+      mustChangePassword: false
+    });
+
+    redirectByRole(res.data.user.role);
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.error || "Failed to change password"
+    };
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ----------------------------------------------------
      LOGOUT
@@ -158,6 +158,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         auth,
+        initialized,
         setAuth: setAuthState,
         login,
         logout,
