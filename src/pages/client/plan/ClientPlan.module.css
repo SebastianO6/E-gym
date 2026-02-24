@@ -1,11 +1,13 @@
 /* Main Container */
 .container {
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
 }
 
 /* Header Section */
@@ -16,39 +18,29 @@
   color: #111827;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
 }
 
 /* Empty State */
-.emptyState {
-  background: white;
+.emptyMessage {
+  text-align: center;
   padding: 64px 32px;
+  color: #6b7280;
+  font-size: 16px;
+  background: #f9fafb;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
-  text-align: center;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-}
-
-.emptyState h3 {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  color: #111827;
-}
-
-.emptyState p {
-  font-size: 15px;
-  color: #6b7280;
-  margin: 0;
-  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 /* Plan Card */
 .planCard {
-  background: white;
-  padding: 36px;
+  background: #ffffff;
+  padding: 32px;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -56,14 +48,12 @@
 
 /* Plan Title */
 .planTitle {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  margin: 0;
+  margin: 0 0 12px 0;
   color: #111827;
-  display: flex;
-  align-items: center;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 /* Plan Content */
@@ -71,12 +61,44 @@
   font-size: 15px;
   line-height: 1.8;
   color: #374151;
-  white-space: pre-line;
-  padding: 24px;
+  padding: 20px;
   background: #f9fafb;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+/* Day Block */
+.dayBlock {
+  margin-bottom: 20px;
+}
+
+.dayBlock h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #111827;
+  border-bottom: 1px dashed #d1d5db;
+  padding-bottom: 6px;
+}
+
+/* Exercise Block */
+.exerciseBlock {
+  margin-left: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.exerciseBlock h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  color: #1f2937;
+}
+
+.exerciseBlock p {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 0;
 }
 
 /* Trainer Notes */
@@ -91,21 +113,13 @@
 }
 
 .notes strong {
-  color: #92400e;
   font-weight: 700;
+  color: #92400e;
   display: block;
   margin-bottom: 8px;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-/* Loading State */
-.container > div:first-child {
-  text-align: center;
-  padding: 64px 24px;
-  color: #6b7280;
-  font-size: 15px;
 }
 
 /* Responsive Design */
@@ -127,15 +141,24 @@
   }
 
   .planContent {
-    padding: 20px;
+    padding: 16px;
     font-size: 14px;
+  }
+
+  .dayBlock h2 {
+    font-size: 16px;
+  }
+
+  .exerciseBlock h3 {
+    font-size: 15px;
   }
 
   .notes {
     padding: 16px;
   }
 
-  .emptyState {
+  .emptyMessage {
     padding: 48px 24px;
+    font-size: 15px;
   }
 }

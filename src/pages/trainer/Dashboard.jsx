@@ -64,7 +64,7 @@ const TrainerDashboard = () => {
       value: todaySessions.length,
       icon: Calendar,
       color: "#7c3aed",
-      bg: "#f3e8ff",
+      bg: "#ffffff",
     },
   ];
 

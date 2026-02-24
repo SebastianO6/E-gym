@@ -21,26 +21,56 @@ const GymDetails = () => {
 
   return (
     <div className={styles.container}>
-      <button className={styles.backBtn} onClick={() => navigate("/superadmin/gyms")}>
-        ← Back
+      <button
+        className={styles.backBtn}
+        onClick={() => navigate("/superadmin/gyms")}
+      >
+        ← Back to Gyms
       </button>
 
-      <h1 className={styles.title}>{gym.name}</h1>
+      <div className={styles.header}>
+        <div>
+          <h1 className={styles.title}>{gym.name}</h1>
+          <p className={styles.subtitle}>
+            Detailed gym overview and performance metrics
+          </p>
+        </div>
+      </div>
 
-      <div className={styles.card}>
-        <div><span>Owner Email</span><strong>{gym.owner_email || "Not assigned"}</strong></div>
-        <div><span>Location</span><strong>{gym.address || "N/A"}</strong></div>
-        <div><span>Members</span><strong>{gym.members}</strong></div>
-        <div><span>Monthly Revenue</span>
-          <strong>KES {gym.monthly_revenue_ksh.toLocaleString()}</strong>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Owner Email</p>
+          <h3 className={styles.statValue}>
+            {gym.owner_email || "Not assigned"}
+          </h3>
+        </div>
+
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Location</p>
+          <h3 className={styles.statValue}>
+            {gym.address || "N/A"}
+          </h3>
+        </div>
+
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Members</p>
+          <h3 className={styles.statValue}>
+            {gym.members}
+          </h3>
+        </div>
+
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Monthly Revenue</p>
+          <h3 className={styles.statValue}>
+            KES {gym.monthly_revenue_ksh.toLocaleString()}
+          </h3>
         </div>
       </div>
 
       <p className={styles.note}>
-        Revenue, members & subscriptions auto-update as activity increases.
+        Revenue, members & subscriptions automatically update as activity increases.
       </p>
     </div>
-
   );
 };
 

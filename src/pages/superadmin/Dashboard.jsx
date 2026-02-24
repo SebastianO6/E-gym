@@ -14,20 +14,58 @@ const SuperAdminDashboard = () => {
     load();
   }, []);
 
+  const [loading, setLoading] = useState(true);
+
   const load = async () => {
-    setGyms(await getAllGyms());
-    setUsers(await getAllUsers());
+    try {
+      setLoading(true);
+
+      const [gymsData, usersData] = await Promise.all([
+        getAllGyms(),
+        getAllUsers(),
+      ]);
+
+      setGyms(gymsData || []);
+      setUsers(usersData || []);
+    } catch (err) {
+      console.error("Dashboard load error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const stats = [
-    { label: "Total Gyms", value: gyms.length, icon: Building },
-    { label: "Total Users", value: users.length, icon: Users },
+    {
+      label: "Total Gyms",
+      value: gyms.length,
+      icon: Building,
+    },
+    {
+      label: "Total Users",
+      value: users.length,
+      icon: Users,
+    },
     {
       label: "Gym Admins",
       value: users.filter((u) => u.role === "gymadmin").length,
-      icon: Activity,
+      icon: Users,
+    },
+    {
+      label: "Trainers",
+      value: users.filter((u) => u.role === "trainer").length,
+      icon: Users,
+    },
+    {
+      label: "Clients",
+      value: users.filter((u) => u.role === "client").length,
+      icon: Users,
     },
   ];
+
+
+  if (loading) {
+    return <div className={styles.container}>Loading dashboard...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -46,6 +84,49 @@ const SuperAdminDashboard = () => {
       </div>
 
       <PlatformRevenue />
+
+      <div className={styles.sectionCard}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>Recent Gyms</h3>
+          <button
+            className={styles.viewAllBtn}
+            onClick={() => navigate("/superadmin/gyms")}
+          >
+            View All
+          </button>
+        </div>
+
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gyms.slice(0, 5).map((gym) => (
+                <tr key={gym.id}>
+                  <td>{gym.name}</td>
+                  <td>{gym.email}</td>
+                  <td>
+                    <span
+                      className={`${styles.badge} ${
+                        gym.status === "active"
+                          ? styles.badgeActive
+                          : styles.badgePending
+                      }`}
+                    >
+                      {gym.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <button onClick={() => navigate("/superadmin/gyms")}>
         Manage Gyms →
