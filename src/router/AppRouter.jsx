@@ -10,25 +10,20 @@ import NotFound from "../pages/common/NotFound";
 /* ============================
    SUPERADMIN
 ============================ */
-import SA_Dashboard from "../pages/superadmin/Dashboard";
-import SA_AllGyms from "../pages/superadmin/AllGyms";
-import SA_GymDetails from "../pages/superadmin/GymDetails";
+import SaDashboard from "../pages/superadmin/Dashboard";
+import SaAllGyms from "../pages/superadmin/AllGyms";
+import SaGymDetails from "../pages/superadmin/GymDetails";
+
+
 
 /* ============================
    GYM ADMIN
 ============================ */
-import GA_Dashboard from "../pages/gymadmin/Dashboard";
-import MembersList from "../pages/gymadmin/members/MembersList";
-import MemberDetails from "../pages/gymadmin/members/MemberDetails";
-import TrainersList from "../pages/gymadmin/trainers/TrainersList";
-import TrainerDetails from "../pages/gymadmin/trainers/TrainersDetails";
-import Announcements from "../pages/gymadmin/Announcements";
-import CreateSchedule from "../pages/gymadmin/CreateSchedule";
-import TrainerSchedules from "../pages/gymadmin/TrainerSchedules";
 import ForcePasswordChange from "../pages/auth/ForcePasswordChange"; // ✅ Changed path
-import GymAdminSettings from "../pages/gymadmin/settings/GymAdminSettings"; // ✅ Added
-import RevenueDashboard from "../pages/gymadmin/RevenueDashboard"; // ✅ Keep this
 import AcceptInvite from "../pages/auth/AcceptInvite";
+import PricingApproval from "../pages/superadmin/PricingApproval";
+import GymAdminRoutes from "../pages/gymadmin/GymAdminRoutes";
+
 
 /* ============================
    TRAINER
@@ -38,11 +33,10 @@ import TrainerMembers from "../pages/trainer/members/TrainerMembers";
 import TrainerMemberDetails from "../pages/trainer/members/TrainerMemberDetails";
 import CreateTrainingPlan from "../pages/trainer/plans/CreateTrainingPlan";
 import TrainerSchedule from "../pages/trainer/schedule/TrainerSchedule";
+import ScheduleDetail from "../pages/trainer/schedule/ScheduleDetail";
 
 // Trainer Messaging Structure
 import TrainerMessages from "../pages/trainer/messages/TrainerMessages";
-import MessagesList from "../pages/trainer/messages/MessagesList";
-import ChatWindow from "../pages/trainer/messages/ChatWindow";
 
 /* ============================
    CLIENT
@@ -70,6 +64,9 @@ export default function AppRouter() {
       {/* ✅ FORCE PASSWORD CHANGE (Standalone route for all roles) */}
       <Route path="/force-password-change" element={<ForcePasswordChange />} />
 
+      <Route path="/accept-invite" element={<AcceptInvite />} />
+
+
       {/* ============================
           SUPERADMIN ROUTES
       ============================ */}
@@ -81,48 +78,24 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<SA_Dashboard />} />
-        <Route path="gyms" element={<SA_AllGyms />} />
-        <Route path="gyms/:gymId" element={<SA_GymDetails />} />
-        {/* ✅ You might want to add superadmin settings later */}
-        {/* <Route path="settings" element={<SuperadminSettings />} /> */}
+        <Route index element={<SaDashboard />} />
+        <Route path="gyms" element={<SaAllGyms />} />
+        <Route path="gyms/:gymId" element={<SaGymDetails />} />
+        <Route path="pricing" element={<PricingApproval />} />
       </Route>
 
-      {/* ============================
-          GYM ADMIN ROUTES
-      ============================ */}
+
       <Route
-        path="/gymadmin"
+        path="/gymadmin/*"
         element={
           <ProtectedRoute allowedRoles={["gymadmin"]}>
             <Layout userRole="gymadmin" />
           </ProtectedRoute>
         }
       >
-        <Route index element={<GA_Dashboard />} />
-
-        {/* Member management */}
-        <Route path="members" element={<MembersList />} />
-        <Route path="members/:memberId" element={<MemberDetails />} />
-
-        {/* Trainer management */}
-        <Route path="trainers" element={<TrainersList />} />
-        <Route path="trainers/:trainerId" element={<TrainerDetails />} />
-
-        {/* Announcements */}
-        <Route path="announcements" element={<Announcements />} />
-        
-        {/* Schedule management */}
-        <Route path="schedules" element={<TrainerSchedules />} />
-        <Route path="schedules/new" element={<CreateSchedule />} />
-        <Route path="schedules/create" element={<CreateSchedule />} />
-        
-        {/* ✅ GYM ADMIN SETTINGS (moved inside Layout) */}
-        <Route path="settings" element={<GymAdminSettings />} />
-        
-        {/* ✅ REVENUE (moved inside Layout) */}
-        <Route path="revenue" element={<RevenueDashboard />} />
+        <Route path="*" element={<GymAdminRoutes />} />
       </Route>
+
 
       {/* ============================
           TRAINER ROUTES
@@ -140,11 +113,11 @@ export default function AppRouter() {
         <Route path="members/:memberId" element={<TrainerMemberDetails />} />
         <Route path="plans/create" element={<CreateTrainingPlan />} />
         <Route path="schedule" element={<TrainerSchedule />} />
+        <Route path="/trainer/schedule/:id" element={<ScheduleDetail />} />
+
 
         {/* Messaging */}
         <Route path="messages" element={<TrainerMessages />}>
-          <Route index element={<MessagesList />} />
-          <Route path=":memberId" element={<ChatWindow />} />
         </Route>
         
         {/* ✅ You might want to add trainer settings later */}

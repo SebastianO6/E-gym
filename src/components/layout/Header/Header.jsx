@@ -1,17 +1,15 @@
-// src/components/layout/Header/Header.jsx
 import React from "react";
 import styles from "./Header.module.css";
 import { getCurrentUser } from "../../../utils/authLocal";
 
 const Header = ({ activeTab }) => {
   const user = getCurrentUser();
-  const role = user?.role ?? "";
-  const name = user?.name ?? user?.email ?? "";
 
-  const avatarLetter =
-    name && typeof name === "string" && name.length > 0
-      ? name[0].toUpperCase()
-      : "U";
+  const gymName =
+    user?.gym?.name ||
+    user?.gym_name ||
+    localStorage.getItem("gym_name") ||
+    "Your Gym";
 
   return (
     <header className={styles.header}>
@@ -20,12 +18,9 @@ const Header = ({ activeTab }) => {
       </div>
 
       <div className={styles.right}>
-        <div className={styles.user}>
-          <div className={styles.avatar}>{avatarLetter}</div>
-          <div>
-            <div className={styles.username}>{name}</div>
-            <div className={styles.role}>{role}</div>
-          </div>
+        <div className={styles.greeting}>
+          <div className={styles.hello}>Hello 👋</div>
+          <div className={styles.gymName}>{gymName}</div>
         </div>
       </div>
     </header>

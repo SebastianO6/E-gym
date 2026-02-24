@@ -56,3 +56,36 @@
   line-height: 1.6;
   font-size: 14px;
 }
+
+.trainerDetails {
+  padding: 2rem;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.trainerCard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+}
+
+.trainerCard h1 {
+  margin-bottom: 0.5rem;
+}
+
+.trainerCard p {
+  color: #475569;
+}
+
+.deleteBtn {
+  margin-top: 1rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -8,15 +8,11 @@ export const listTrainers = async (params = {}) => {
   return res.data.items;
 };
 
-export const getTrainer = async (id) => {
-  const res = await api.get(`/gymadmin/trainers/${id}`);
+export const getTrainer = async (trainerId) => {
+  const res = await api.get(`/gymadmin/trainers/${trainerId}`);
   return res.data;
 };
 
-export const createTrainer = async (data) => {
-  const res = await api.post("/gymadmin/trainers", data);
-  return res.data;
-};
 
 export const updateTrainer = async (id, data) => {
   const res = await api.put(`/gymadmin/trainers/${id}`, data);
@@ -25,6 +21,21 @@ export const updateTrainer = async (id, data) => {
 
 export const deleteTrainer = async (id) => {
   const res = await api.delete(`/gymadmin/trainers/${id}`);
+  return res.data;
+};
+
+
+export const inviteTrainer = async (formData) => {
+  return api.post("/gymadmin/trainers/invite", {
+    email: formData.email,
+    first_name: formData.first_name,
+    last_name: formData.last_name,
+    phone: formData.phone,
+  });
+};
+
+export const resendInvite = async (inviteId) => {
+  const res = await api.post(`/gymadmin/invites/${inviteId}/resend`);
   return res.data;
 };
 
@@ -41,13 +52,13 @@ export const getMember = async (id) => {
   return res.data;
 };
 
-export const createMember = async (data) => {
-  const res = await api.post("/gymadmin/members", data);
-  return res.data; // Returns { message, member, initial_password }
-};
-
 export const updateMember = async (id, data) => {
   const res = await api.put(`/gymadmin/members/${id}`, data);
+  return res.data;
+};
+
+export const inviteMember = async (email) => {
+  const res = await api.post("/gymadmin/members/invite", { email });
   return res.data;
 };
 
@@ -57,20 +68,23 @@ export const deleteMember = async (id) => {
 };
 
 /* =========================
-   ASSIGN TRAINER
+   ASSIGN TRAINER (FIXED)
 ========================= */
 export const assignTrainerToMember = async (memberId, trainerId) => {
-  const res = await api.put(`/gymadmin/members/${memberId}`, {
-    trainer_id: trainerId,
-  });
+  const res = await api.post(
+    `/gymadmin/members/${memberId}/assign-trainer`,
+    { trainer_id: trainerId }
+  );
   return res.data;
 };
+
+
 
 /* =========================
    ANNOUNCEMENTS
 ========================= */
-export const listAnnouncements = async (params = {}) => {
-  const res = await api.get("/gymadmin/announcements", { params });
+export const listAnnouncements = async () => {
+  const res = await api.get("/gymadmin/announcements");
   return res.data;
 };
 
@@ -93,30 +107,44 @@ export const deleteAnnouncement = async (id) => {
    DASHBOARD
 ========================= */
 export const getDashboardSummary = async () => {
-  const res = await api.get("/gymadmin/dashboard/summary");
+  const res = await api.get("/gymadmin/dashboard");
+  return res.data;
+};
+
+
+export const getRevenueSummary = async () => {
+  const res = await api.get("/gymadmin/revenue");
   return res.data;
 };
 
 /* =========================
-   GYM INFO
+   MEMBERSHIP
 ========================= */
-export const getGymInfo = async () => {
-  const res = await api.get("/gymadmin/gym/info");
+export const renewMember = async (memberId, plan) => {
+  const res = await api.post(`/gymadmin/members/${memberId}/renew`, { plan });
   return res.data;
 };
 
-/* =========================
-   MEMBERSHIP STATS
-========================= */
-export const getMembershipStats = async () => {
-  const res = await api.get("/gymadmin/membership/stats");
+
+export const getGymPricing = async () => {
+  const res = await api.get("/gymadmin/pricing");
   return res.data;
 };
 
-/* =========================
-   TRAINER WORKLOAD
-========================= */
-export const getTrainerWorkload = async () => {
-  const res = await api.get("/gymadmin/trainers/workload");
+export const setGymPricing = async (payload) => {
+  const res = await api.post("/gymadmin/pricing", payload);
   return res.data;
-};  
+};
+
+
+export const getRevenueSeries = async () => {
+  const res = await api.get("/gymadmin/revenue/series");
+  return res.data;
+};
+
+
+export const getMemberPayments = async (memberId) => {
+  const res = await api.get(`/gymadmin/members/${memberId}/payments`);
+  return res.data;
+};
+

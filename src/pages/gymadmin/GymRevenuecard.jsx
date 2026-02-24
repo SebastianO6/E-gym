@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./GymRevenueCard.module.css";
-import { getRevenueSummary } from "../../../services/revenueService";
+import { getRevenueSummary } from "../../services/revenueService";
 
 export default function GymRevenueCard() {
   const [data, setData] = useState(null);

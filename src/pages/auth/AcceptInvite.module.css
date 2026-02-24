@@ -1,0 +1,46 @@
+.accept-invite-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 24px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.accept-invite-container h2 {
+  margin-bottom: 16px;
+}
+
+.accept-invite-container label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.accept-invite-container input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+}
+
+.accept-invite-container button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.accept-invite-container .error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+}
+
+.accept-invite-container.success {
+  text-align: center;
+}

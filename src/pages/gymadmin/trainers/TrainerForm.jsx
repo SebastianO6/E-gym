@@ -1,95 +1,93 @@
-import React, { useState, useEffect } from "react";
-import { X, Mail, FileText, Building } from "lucide-react";
-import "./TrainerForm.module.css";
+import React, { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import styles from "./TrainerForm.module.css";
 
-const TrainerForm = ({ onSuccess, onCancel, existingTrainer = null, onCreate, onUpdate }) => {
-  const [formData, setFormData] = useState({
+export default function TrainerForm({
+  existingTrainer,
+  onCreate,
+  onUpdate,
+  onCancel,
+  onSuccess,
+}) {
+  const [form, setForm] = useState({
     email: "",
-    bio: "",
-    gym_id: ""
+    first_name: "",
+    last_name: "",
+    phone: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (existingTrainer) {
-      setFormData({
+      setForm({
         email: existingTrainer.email || "",
-        bio: existingTrainer.bio || "",
-        gym_id: existingTrainer.gym_id?.toString() || ""
+        first_name: existingTrainer.first_name || "",
+        last_name: existingTrainer.last_name || "",
+        phone: existingTrainer.phone || "",
       });
     }
   }, [existingTrainer]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({});
-  };
+  const change = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setError("");
 
-    const gymIdToUse =
-      formData.gym_id || localStorage.getItem("gym_id");
-
-    if (!formData.email) {
-      setErrors({ email: "Email is required" });
-      setLoading(false);
-      return;
+    if (!existingTrainer && !form.email.trim()) {
+      return setError("Email is required");
     }
 
-    const payload = {
-      email: formData.email,
-      bio: formData.bio || "",
-      gym_id: parseInt(gymIdToUse, 10)
-    };
-
+    setLoading(true);
     try {
       if (existingTrainer) {
-        await onUpdate(existingTrainer.id, payload);
+        await onUpdate(existingTrainer.id, form);
       } else {
-        await onCreate(payload); // invite-based creation
+        await onCreate(form);
       }
       onSuccess();
     } catch (err) {
-      setErrors({
-        general: err.response?.data?.error || "Failed to save trainer"
-      });
+      setError(err.response?.data?.error || "Operation failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="trainer-form-modal">
-        <div className="modal-header">
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
+        <header>
           <h2>{existingTrainer ? "Edit Trainer" : "Invite Trainer"}</h2>
           <button onClick={onCancel}><X /></button>
-        </div>
+        </header>
 
-        <form onSubmit={handleSubmit}>
-          <label>Email *</label>
-          <input name="email" value={formData.email} onChange={handleChange} disabled={!!existingTrainer} />
-          {errors.email && <span>{errors.email}</span>}
+        <form onSubmit={submit}>
+          {!existingTrainer && (
+            <>
+              <label>Email *</label>
+              <input name="email" value={form.email} onChange={change} />
+            </>
+          )}
 
-          <label>Bio</label>
-          <textarea name="bio" value={formData.bio} onChange={handleChange} />
+          <label>First Name</label>
+          <input name="first_name" value={form.first_name} onChange={change} />
 
-          <label>Gym ID</label>
-          <input name="gym_id" type="number" value={formData.gym_id} onChange={handleChange} placeholder="Leave empty to use your gym" />
+          <label>Last Name</label>
+          <input name="last_name" value={form.last_name} onChange={change} />
 
-          {errors.general && <p>{errors.general}</p>}
+          <label>Phone</label>
+          <input name="phone" value={form.phone} onChange={change} />
 
-          <button type="submit" disabled={loading}>
-            {existingTrainer ? "Update Trainer" : "Send Invite"}
+          {error && <p className={styles.error}>{error}</p>}
+
+          <button disabled={loading}>
+            {loading ? "Please wait..." : existingTrainer ? "Save Changes" : "Send Invite"}
           </button>
         </form>
       </div>
     </div>
   );
-};
-
-export default TrainerForm;
+}

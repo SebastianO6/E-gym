@@ -224,6 +224,23 @@
   min-height: 80px;
 }
 
+.activeBadge {
+  background: #e6f9ec;
+  color: #1f9d55;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.inactiveBadge {
+  background: #fdeaea;
+  color: #d64545;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {

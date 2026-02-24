@@ -629,3 +629,38 @@
     text-align: left;
   }
 } 
+
+.dashboard { padding: 24px; }
+.title { margin-bottom: 16px; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.cardLabel { color: #777; }
+.cardValue { font-size: 24px; font-weight: bold; }
+
+.section { margin-top: 32px; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.warning {
+  color: #d97706;
+  font-weight: bold;
+}

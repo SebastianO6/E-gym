@@ -28,7 +28,7 @@ const GymAdminSettings = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await api.get("/gymadmin-profile/profile");
+      const response = await api.get("/gymadmin/profile");
       setProfile({
         name: response.data.user.name || "",
         email: response.data.user.email,
@@ -47,7 +47,7 @@ const GymAdminSettings = () => {
     setSuccess("");
 
     try {
-      await api.put("/gymadmin-profile/profile", profile);
+      await api.put("/gymadmin/profile", profile);
       setSuccess("Profile updated successfully!");
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
@@ -71,7 +71,7 @@ const GymAdminSettings = () => {
     }
 
     try {
-      await api.put("/gymadmin-profile/change-password", {
+      await api.put("/gymadmin/change-password", {
         current_password: password.current_password,
         new_password: password.new_password
       });

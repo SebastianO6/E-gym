@@ -7,14 +7,14 @@ export async function getMyPlan() {
 }
 
 export async function getAnnouncements() {
-  const res = await api.get("/client/announcements");
+  const res = await api.get("/announcements");
   return res.data;
 }
 
 export const sendClientMessage = (data) =>
   api.post("/messages/send", {
     receiver_id: Number(data.receiver_id),
-    text: data.text,
+    content: data.text,
   }).then(r => r.data);
 
 export const mySentMessages = () =>

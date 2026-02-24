@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ExpiringMembersCard.module.css";
-import api from "../../../api/axios";
+import api from "../../api/axios";
 
 export default function ExpiringMembersCard() {
   const [items, setItems] = useState([]);

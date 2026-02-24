@@ -1,21 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.css";
 import { Dumbbell, MessageCircle, ClipboardList, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientSchedule from "./clientSchedule";
+import api from "../../api/axios";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
+  const [announcements, setAnnouncements] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [membership, setMembership] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      api.get("/client/announcements"),
+      api.get("/client/plans"),
+      api.get("/client/membership/me")
+    ])
+    .then(([annRes, planRes, memberRes]) => {
+      setAnnouncements(annRes.data || []);
+      setPlans(planRes.data || []);
+      setMembership(memberRes.data || null);
+    })
+    .catch(() => {})
+    .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div style={{ padding: 40, textAlign: "center" }}>
+          Loading dashboard...
+        </div>
+      </div>
+    );
+  }
+
+  const activePlan = plans[0];
 
   return (
     <div className={styles.container}>
 
       <div className={styles.headerCard}>
-        <h1>Welcome Back, Alex 👋</h1>
+        <h1>Welcome Back 👋</h1>
         <p>Your fitness journey continues today! Stay consistent.</p>
       </div>
 
-      {/* Stats */}
       <div className={styles.statsGrid}>
 
         <div className={styles.statCard} onClick={() => navigate('/client/plan')}>
@@ -23,37 +54,46 @@ const ClientDashboard = () => {
             <Dumbbell size={24} />
           </div>
           <h3>Active Plan</h3>
-          <p>Strength + Cardio</p>
+          <p>{activePlan ? activePlan.title : "No Plan Assigned"}</p>
         </div>
 
         <div className={styles.statCard}>
           <div className={`${styles.iconWrapper} ${styles.green}`}>
-             <ClipboardList size={24} />
+            <ClipboardList size={24} />
           </div>
-          <h3>Next Workout</h3>
-          <p>Leg Day • Tomorrow</p>
+          <h3>Subscription</h3>
+          <p>
+            {membership?.expired
+              ? "Expired"
+              : membership?.due_date
+              ? `Valid until ${new Date(membership.due_date + "T00:00:00").toLocaleDateString()}`
+              : "No Subscription"}
+          </p>
         </div>
 
         <div className={styles.statCard} onClick={() => navigate('/client/messages')}>
           <div className={`${styles.iconWrapper} ${styles.purple}`}>
-             <MessageCircle size={24} />
+            <MessageCircle size={24} />
           </div>
           <h3>Messages</h3>
-          <p>2 New Messages</p>
+          <p>Open Chat</p>
         </div>
 
         <div className={styles.statCard} onClick={() => navigate('/client/announcements')}>
           <div className={`${styles.iconWrapper} ${styles.orange}`}>
-             <Bell size={24} />
+            <Bell size={24} />
           </div>
           <h3>Announcements</h3>
-          <p>No new updates</p>
+          <p>
+            {announcements.length === 0
+              ? "No updates"
+              : `${announcements.length} update${announcements.length > 1 ? "s" : ""}`}
+          </p>
         </div>
 
       </div>
 
       <ClientSchedule />
-
     </div>
   );
 };

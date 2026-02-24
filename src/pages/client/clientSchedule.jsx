@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getMySchedule } from "../../services/trainerServiceSchedule";
-import styles from "./ClientSchedules.module.css"
+import styles from "./clientSchedules.module.css";
 
 const ClientSchedule = () => {
   const [sessions, setSessions] = useState([]);
@@ -11,22 +11,28 @@ const ClientSchedule = () => {
       .catch(() => setSessions([]));
   }, []);
 
+  if (!sessions.length)
+    return <p style={{ padding: 12, textAlign: "center" }}>No upcoming sessions.</p>;
+
   return (
-    <div>
+    <div className={styles.scheduleContainer}>
       <h2>My Training Sessions</h2>
-
-      {sessions.length === 0 && <p>No upcoming sessions.</p>}
-
-      <ul>
+      <div className={styles.scheduleGrid}>
         {sessions.map((s, i) => (
-          <li key={i}>
-            <b>{s.workout_date}</b>{" "}
-            {s.start_time && `(${s.start_time} - ${s.end_time})`}
-            <div>Status: {s.status}</div>
+          <div key={i} className={styles.sessionCard}>
+            <div className={styles.sessionHeader}>
+              <span>{new Date(s.workout_date).toLocaleDateString()}</span>
+              {s.start_time && (
+                <span>
+                  {s.start_time} - {s.end_time}
+                </span>
+              )}
+            </div>
+            <div>Status: <b className={s.status === "completed" ? styles.completed : styles.pending}>{s.status}</b></div>
             {s.notes && <small>{s.notes}</small>}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

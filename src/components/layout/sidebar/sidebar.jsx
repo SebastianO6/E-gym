@@ -10,7 +10,8 @@ import {
   Menu, 
   X, 
   TrendingUp,
-  LogOut  // ✅ Add this import
+  LogOut,
+  CreditCard,  // ✅ Add this import
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";  // ✅ Import auth context
 
@@ -24,8 +25,7 @@ const Sidebar = ({ userRole }) => {
     superadmin: [
       { label: "Overview", icon: LayoutDashboard, to: "/superadmin" },
       { label: "Gyms", icon: Building2, to: "/superadmin/gyms" },
-      { label: "Analytics", icon: TrendingUp, to: "/superadmin/analytics" },
-      { label: "Billing", icon: Bell, to: "/superadmin/billing" },
+      { label: "Pricing Approvals", icon: CreditCard, to: "/superadmin/pricing" }, 
       { label: "Settings", icon: Settings, to: "/superadmin/settings" },
     ],
     gymadmin: [
@@ -34,6 +34,7 @@ const Sidebar = ({ userRole }) => {
       { label: "Trainers", icon: Users, to: "/gymadmin/trainers" }, 
       { label: "Announcements", icon: Bell, to: "/gymadmin/announcements" },
       { label: "Settings", icon: Settings, to: "/gymadmin/settings" },
+      { label: "Pricing Settings", icon: CreditCard, to: "/gymadmin/settings/pricing" },
     ],
     trainer: [
       { label: "Dashboard", icon: LayoutDashboard, to: "/trainer" },
@@ -46,7 +47,6 @@ const Sidebar = ({ userRole }) => {
       { label: "Dashboard", icon: LayoutDashboard, to: "/client" },
       { label: "My Plan", icon: TrendingUp, to: "/client/plan" },
       { label: "Messages", icon: Bell, to: "/client/messages" },
-      { label: "My Schedule", icon: Bell, to: "/client/schedule" },
       { label: "Announcements", icon: Bell, to: "/client/announcements" },
       { label: "Settings", icon: Settings, to: "/client/settings" }, 
     ],

@@ -3,7 +3,7 @@ import styles from "./MembersList.module.css";
 import AddMemberModal from "./AddMemberModal";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus } from "lucide-react";
-import { listMembers } from "../../../services/gymAdminService";
+import { listMembers, deleteMember } from "../../../services/gymAdminService";
 
 const MembersList = () => {
   const navigate = useNavigate();
@@ -68,6 +68,21 @@ const MembersList = () => {
                 <button onClick={() => navigate(`/gymadmin/members/${m.id}`)}>
                   View
                 </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await deleteMember(m.id);
+                      loadMembers();
+                    } catch (err) {
+                      // silently ignore since delete worked
+                      console.warn("Delete warning:", err);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+
+
               </td>
             </tr>
           ))}

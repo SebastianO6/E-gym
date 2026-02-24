@@ -1,37 +1,33 @@
-// import { io } from "socket.io-client";
-// import { getAuthToken } from "./context/authLocal";
+// src/socket.js
+import { io } from "socket.io-client";
 
-// let socket = null;
+export const connectSocket = (token) => {
+  if (!token) {
+    console.log("❌ No token provided to socket");
+    return null;
+  }
 
-// export const connectSocket = () => {
-//   const token = getAuthToken();
-//   if (!token) return;
+  const socket = io("http://localhost:5000", {
+    transports: ["websocket"],
+    auth: {
+      token: `Bearer ${token}`,
+    },
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+  });
 
-//   if (!socket) {
-//     socket = io("http://localhost:5000", {
-//       auth: {
-//         token: `Bearer ${token}`,
-//       },
-//       transports: ["websocket"],
-//     });
-//   }
+  socket.on("connect", () => {
+    console.log("✅ Socket connected:", socket.id);
+  });
 
-//   if (!socket.connected) {
-//     socket.connect();
-//   }
-// };
+  socket.on("connect_error", (err) => {
+    console.log("❌ Socket connection error:", err.message);
+  });
 
-// export const disconnectSocket = () => {
-//   if (socket) {
-//     socket.disconnect();
-//     socket = null;
-//   }
-// };
+  socket.on("disconnect", () => {
+    console.log("❌ Socket disconnected");
+  });
 
-// export default () => socket;
-
-
-// TEMP disable socket until backend stable
-export const connectSocket = () => {};
-export const disconnectSocket = () => {};
-export default null;
+  return socket;
+};

@@ -1,76 +1,48 @@
 import React, { useEffect, useState } from "react";
-// import { getMyPlan } from "../../../services/clientService"; // Mocking for now as file structure is unknown
 import styles from "./ClientPlan.module.css";
-import { FileText } from "lucide-react";
-
-// Mock data to ensure UI renders
-const MOCK_PLANS = [
-  {
-    id: 1,
-    title: "Strength & Hypertrophy Phase 1",
-    plan: `Monday: Chest & Triceps
-- Bench Press: 4 sets x 8-10 reps
-- Incline Dumbbell Press: 3 sets x 10-12 reps
-- Tricep Pushdowns: 3 sets x 15 reps
-
-Wednesday: Back & Biceps
-- Lat Pulldowns: 4 sets x 10 reps
-- Barbell Rows: 3 sets x 8 reps
-- Hammer Curls: 3 sets x 12 reps
-
-Friday: Legs & Shoulders
-- Squats: 4 sets x 6-8 reps
-- Overhead Press: 3 sets x 8-10 reps
-- Lunges: 3 sets x 12 reps per leg`,
-    notes: "Focus on form and controlled movements. Increase weight only when you can complete all reps with good form."
-  }
-];
+import api from "../../../api/axios";
 
 export default function ClientPlan() {
   const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setPlans(MOCK_PLANS);
-      setLoading(false);
-    }, 500);
+    api.get("/client/plans")
+      .then(res => setPlans(res.data || []))
+      .catch(() => setPlans([]));
   }, []);
 
-  if (loading) return <div style={{padding: 24, textAlign: 'center'}}>Loading training plan...</div>;
-  
-  if (!plans.length) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.emptyState}>
-          <h3>No Plan Assigned</h3>
-          <p>Your trainer hasn't assigned a workout plan yet.</p>
-        </div>
-      </div>
-    );
-  }
+  if (!plans.length)
+    return <p style={{ padding: 24 }}>No Plan Assigned</p>;
+
+  const plan = plans[0];
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>My Training Plan</h1>
-      </div>
-      
-      {plans.map((p) => (
-        <div key={p.id} className={styles.planCard}>
-          <h3 className={styles.planTitle}>
-            <FileText size={20} style={{display:'inline', marginRight: 8, verticalAlign:'text-bottom'}}/>
-            {p.title || "Workout Plan"}
-          </h3>
-          <div className={styles.planContent}>{p.plan}</div>
-          {p.notes && (
-            <div className={styles.notes}>
-              <strong>Trainer Notes:</strong> {p.notes}
+      <h1>{plan.trainer_name} {plan.title}</h1>
+
+      <p><strong>Client:</strong> Scheduled</p>
+
+      {plan.days?.map((day) => (
+        <div key={day.day_name} className={styles.dayBlock}>
+          <h2>{day.day_name}</h2>
+
+          {day.exercises.map((ex, i) => (
+            <div key={i} className={styles.exerciseBlock}>
+              <h3>{ex.name}</h3>
+              <p>
+                {ex.sets} sets × {ex.reps} reps • Rest {ex.rest}s
+              </p>
             </div>
-          )}
+          ))}
         </div>
       ))}
+
+      {plan.description && (
+        <div className={styles.notes}>
+          <h3>Trainer Notes</h3>
+          <p>{plan.description}</p>
+        </div>
+      )}
     </div>
   );
 }

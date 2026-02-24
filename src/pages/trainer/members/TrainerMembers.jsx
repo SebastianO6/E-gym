@@ -1,67 +1,133 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./TrainerMembers.module.css";
-import { Search } from "lucide-react";
-
-// Mock members
-const MOCK_MEMBERS = [
-  { id: 1, name: "Alex Johnson", age: 28, goal: "Weight Loss" },
-  { id: 2, name: "Maria Gomez", age: 31, goal: "Muscle Gain" },
-  { id: 3, name: "David Lee", age: 22, goal: "Endurance" },
-  { id: 4, name: "Sarah Connor", age: 35, goal: "Conditioning" },
-];
+import { Search, Calendar, MessageSquare, FileText } from "lucide-react";
+import api from "../../../api/axios";
 
 const TrainerMembers = () => {
-  const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const [members, setMembers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const filtered = useMemo(() => {
-    return MOCK_MEMBERS.filter(m =>
-      m.name.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      const res = await api.get("/trainer/members");
+      setMembers(res.data.items || []);
+    } catch (err) {
+      console.error("Failed to fetch members", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Days until subscription ends
+  const daysLeft = (date) => {
+    if (!date) return null;
+    const today = new Date();
+    const end = new Date(date);
+    const diff = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    return diff;
+  };
+
+  const filteredMembers = useMemo(() => {
+    return members.filter((m) =>
+      `${m.first_name} ${m.last_name}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [members, search]);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>My Members</h1>
-        <div className={styles.searchWrapper}>
-          <Search size={16} className={styles.searchIcon} />
-          <input
-            className={styles.search}
-            placeholder="Search members by name..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        <h1>My Members</h1>
+        <p>Manage and track your assigned clients</p>
       </div>
 
-      <div className={styles.list}>
-        {filtered.map(m => (
-          <div key={m.id} className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <div className={styles.avatar}>
-                    {m.name.charAt(0)}
+      {/* Search */}
+      <div className={styles.searchWrapper}>
+        <Search size={18} />
+        <input
+          type="text"
+          placeholder="Search member..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      {loading ? (
+        <p>Loading members...</p>
+      ) : filteredMembers.length === 0 ? (
+        <p>No members found.</p>
+      ) : (
+        <div className={styles.grid}>
+          {filteredMembers.map((member) => {
+            const remaining = daysLeft(member.subscription_end);
+
+            return (
+              <div key={member.id} className={styles.card}>
+                <div className={styles.top}>
+                  <h3>
+                    {member.first_name} {member.last_name}
+                  </h3>
+                  {remaining !== null && (
+                    <span
+                      className={
+                        remaining <= 3
+                          ? styles.expiring
+                          : styles.active
+                      }
+                    >
+                      {remaining <= 0
+                        ? "Expired"
+                        : `${remaining} days left`}
+                    </span>
+                  )}
                 </div>
-                <div className={styles.cardInfo}>
-                    <h3>{m.name}</h3>
-                    <p className={styles.cardMeta}>{m.age} years old</p>
+
+                <div className={styles.info}>
+                  <p>{member.email}</p>
+                  <p>{member.phone}</p>
+                </div>
+
+                <div className={styles.actions}>
+                  <button
+                    onClick={() =>
+                      navigate(`/trainer/members/${member.id}`)
+                    }
+                  >
+                    <FileText size={16} />
+                    View
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      navigate(`/trainer/plans/create?client=${member.id}`)
+                    }
+                  >
+                    <Calendar size={16} />
+                    Assign Plan
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      navigate(`/trainer/messages?user=${member.id}`)
+                    }
+                  >
+                    <MessageSquare size={16} />
+                    Message
+                  </button>
                 </div>
               </div>
-            </div>
-            
-            <div className={styles.goals}>
-                <span className={styles.tag}>{m.goal}</span>
-            </div>
-
-            <div className={styles.actions}>
-              <button onClick={() => navigate(`/trainer/members/${m.id}`)} className={`${styles.btn} ${styles.view}`}>View Profile</button>
-              <button onClick={() => navigate(`/trainer/plans/create?member=${m.id}`)} className={`${styles.btn} ${styles.plan}`}>Create Plan</button>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

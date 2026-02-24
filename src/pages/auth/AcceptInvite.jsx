@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import api from "../../api/axios";
+import React, { useEffect, useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import axios from "../../api/axios"; 
+import "./AcceptInvite.module.css";
 
 const AcceptInvite = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+
   const token = params.get("token");
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [show, setShow] = useState(false);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const submit = async (e) => {
+  useEffect(() => {
+    if (!token) {
+      setError("Invalid or missing invite token");
+    }
+  }, [token]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
 
     if (password !== confirm) {
       setError("Passwords do not match");
@@ -23,63 +35,63 @@ const AcceptInvite = () => {
     }
 
     setLoading(true);
+    setError("");
 
     try {
-      const res = await api.post("/auth/accept-invite", {
+      await axios.post("/auth/accept-invite", {
         token,
         password,
       });
 
-      localStorage.setItem("access_token", res.data.access_token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setSuccess(true);
 
-      navigate(`/${res.data.user.role}`);
+      // Redirect after success
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
-      setError(err.response?.data?.msg || "Invite invalid or expired");
+      setError(
+        err.response?.data?.error ||
+          "Invite is invalid or has already been used"
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  if (success) {
+    return (
+      <div className="accept-invite-container success">
+        <h2>Account Activated 🎉</h2>
+        <p>Redirecting you to login…</p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: 420, margin: "80px auto" }}>
+    <div className="accept-invite-container">
       <h2>Activate Your Account</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <div className="error">{error}</div>}
 
-      <form onSubmit={submit}>
+      <form onSubmit={handleSubmit}>
+        <label>Password</label>
         <input
-          type={show ? "text" : "password"}
-          placeholder="New password"
+          type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ width: "100%", padding: 10, marginBottom: 10 }}
         />
 
+        <label>Confirm Password</label>
         <input
-          type={show ? "text" : "password"}
-          placeholder="Confirm password"
+          type="password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           required
-          style={{ width: "100%", padding: 10, marginBottom: 10 }}
         />
 
-        <label style={{ display: "block", marginBottom: 12 }}>
-          <input
-            type="checkbox"
-            checked={show}
-            onChange={() => setShow(!show)}
-          />{" "}
-          Show password
-        </label>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ width: "100%", padding: 10 }}
-        >
+        <button type="submit" disabled={loading || !token}>
           {loading ? "Activating..." : "Activate Account"}
         </button>
       </form>

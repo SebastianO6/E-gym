@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import styles from "./AddMemberModal.module.css";
 import { X, Mail, User, Copy, Check, AlertCircle } from "lucide-react";
-import { createMember } from "../../../services/gymAdminService";
+import { inviteMember } from "../../../services/gymAdminService";
 import { useAuth } from "../../../context/AuthContext";
 
 const AddMemberModal = ({ onClose, onCreated }) => {
@@ -57,7 +57,8 @@ const AddMemberModal = ({ onClose, onCreated }) => {
         start_date: form.start_date
       };
 
-      const result = await createMember(payload);
+      const result = await inviteMember(payload.email);
+
 
       if (result?.initial_password) {
         setSuccessData({
