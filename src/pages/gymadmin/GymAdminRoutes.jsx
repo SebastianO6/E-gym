@@ -9,6 +9,7 @@ import PricingSettings from "./settings/PricingSettings";
 import Announcements from "./Announcements";
 import TrainersList from "./trainers/TrainersList";
 import GymSettings from "./settings/GymAdminSettings";
+import TrainerDetails from "./trainers/TrainersDetails" 
 
 export default function GymAdminRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function GymAdminRoutes() {
       <Route path="members/:memberId" element={<MemberDetails />} />
 
       <Route path="trainers" element={<TrainersList />} />
+      <Route path="trainers/:trainerId" element={<TrainerDetails/>} />
 
       <Route path="announcements" element={<Announcements />} />
 

@@ -8,28 +8,41 @@ export default function TrainerDetails() {
   const [trainer, setTrainer] = useState(null);
 
   useEffect(() => {
-    getTrainer(trainerId).then(setTrainer);
+    const fetchTrainer = async () => {
+      try {
+        const data = await getTrainer(trainerId);
+        setTrainer(data);
+      } catch (err) {
+        console.error("Failed to fetch trainer", err);
+      }
+    };
+
+    fetchTrainer();
   }, [trainerId]);
 
   if (!trainer) return <p>Loading...</p>;
 
+  const clients = trainer.clients || [];
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Trainer</h1>
+
       <p><strong>Email:</strong> {trainer.email}</p>
       <p><strong>Bio:</strong> {trainer.bio || "—"}</p>
 
-      <TrainerCalendar />
+      <TrainerCalendar trainerId={trainer.id} />
 
       <hr />
 
       <h3>Assigned Members</h3>
-      {trainer.members.length === 0 ? (
+
+      {clients.length === 0 ? (
         <p>No members assigned</p>
       ) : (
         <ul>
-          {trainer.members.map((m) => (
-            <li key={m.id}>{m.email}</li>
+          {clients.map((client) => (
+            <li key={client.id}>{client.email}</li>
           ))}
         </ul>
       )}

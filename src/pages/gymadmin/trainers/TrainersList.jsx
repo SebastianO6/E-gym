@@ -8,6 +8,7 @@ import {
 } from "../../../services/gymAdminService";
 import TrainerForm from "./TrainerForm";
 import styles from "./TrainersList.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function TrainersList() {
   const [trainers, setTrainers] = useState([]);
@@ -37,6 +38,8 @@ export default function TrainersList() {
     load();
   };
 
+  const navigate = useNavigate()
+
   return (
     <div className={styles.container}>
       <header>
@@ -57,7 +60,12 @@ export default function TrainersList() {
         <tbody>
           {trainers.map((t) => (
             <tr key={t.id}>
-              <td>{t.first_name} {t.last_name}</td>
+              <td
+                style={{ cursor: "pointer", fontWeight: "600", color: "#2563eb" }}
+                onClick={() => navigate(`/gymadmin/trainers/${t.id}`)}
+              >
+                {t.first_name} {t.last_name}
+              </td>
               <td>{t.email}</td>
               <td>
                 {t.invite_status === "pending" && "Pending"}
