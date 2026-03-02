@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getDashboardSummary,
   getRevenueSummary,
-  getRevenueSeries,
   listMembers,
   getMember,
 } from "../../services/gymAdminService";
+import api from "../../api/axios";
 import styles from "./Dashboard.module.css";
 
 const DAYS_WARNING = 3;
@@ -13,47 +13,11 @@ const DAYS_WARNING = 3;
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
   const [revenue, setRevenue] = useState(null);
-  const [revenueSeries, setRevenueSeries] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
   const [expiringMembers, setExpiringMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
-  const loadDashboard = async () => {
-    try {
-      setLoading(true);
-
-      const [dashboardSummary, revenueSummary, members] =
-        await Promise.all([
-          getDashboardSummary(),
-          getRevenueSummary(),
-          listMembers(),
-        ]);
-
-      setSummary(dashboardSummary);
-      setRevenue(revenueSummary);
-
-      // Revenue series should NEVER block dashboard
-      try {
-        const series = await getRevenueSeries();
-        setRevenueSeries(series);
-      } catch (e) {
-        console.warn("Revenue series unavailable");
-        setRevenueSeries([]);
-      }
-
-      loadExpiringMembers(members);
-    } catch (err) {
-      console.error("Dashboard load failed", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-  const loadExpiringMembers = async (members) => {
+  const loadExpiringMembers = useCallback(async (members) => {
     const today = new Date();
     const soon = [];
 
@@ -62,7 +26,7 @@ export default function Dashboard() {
         const full = await getMember(m.id);
         const sub = full.subscription;
 
-        if (!sub || !sub.end_date) continue;
+        if (!sub?.end_date) continue;
 
         const end = new Date(sub.end_date);
         const daysLeft = Math.ceil(
@@ -78,114 +42,127 @@ export default function Dashboard() {
           });
         }
       } catch {
-        // ignore broken member
+        // silently ignore individual member errors
       }
     }
 
     setExpiringMembers(soon);
-  };
+  }, []);
+
+  // ✅ Memoized dashboard loader
+  const loadDashboard = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const [dashboardSummary, revenueSummary, members, annRes] =
+        await Promise.all([
+          getDashboardSummary(),
+          getRevenueSummary(),
+          listMembers(),
+          api.get("/announcements"),
+        ]);
+
+      setSummary(dashboardSummary);
+      setRevenue(revenueSummary);
+      setAnnouncements(annRes.data.items || []);
+
+      await loadExpiringMembers(members);
+
+    } catch (err) {
+      console.error("Dashboard load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadExpiringMembers]);
+
+  // ✅ Safe useEffect
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   if (loading) {
-    return <p className={styles.loading}>Loading dashboard…</p>;
+    return <div className={styles.loading}>Loading dashboard…</div>;
   }
 
   if (!summary || !revenue) {
     return <div className={styles.loading}>Loading dashboard...</div>;
   }
 
-
-  
-
   return (
     <div className={styles.dashboard}>
       <h1 className={styles.title}>Gym Dashboard</h1>
 
-      {/* STATS */}
       <div className={styles.cards}>
         <StatCard label="Members" value={summary.members} />
         <StatCard label="Trainers" value={summary.trainers} />
-
-        <StatCard
-          label="Active Members"
-          value={revenue.active_members}
-        />
-        <StatCard
-          label="Total Revenue"
-          value={`KES ${revenue.total_revenue}`}
-        />
+        <StatCard label="Active Members" value={revenue.active_members} />
+        <StatCard label="Total Revenue" value={`KES ${revenue.total_revenue}`} />
       </div>
 
-      {/* EXPIRING MEMBERS */}
       <section className={styles.section}>
         <h2>⚠️ Memberships Expiring Soon</h2>
 
         {expiringMembers.length === 0 ? (
           <p>No memberships expiring in the next {DAYS_WARNING} days.</p>
         ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Plan</th>
-                <th>Days Left</th>
-              </tr>
-            </thead>
-            <tbody>
-              {expiringMembers.map((m) => (
-                <tr key={m.id}>
-                  <td>{m.email}</td>
-                  <td>{m.plan}</td>
-                  <td className={styles.warning}>
-                    {m.daysLeft}
-                  </td>
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Plan</th>
+                  <th>Days Left</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {expiringMembers.map((m) => (
+                  <tr key={m.id}>
+                    <td>{m.email}</td>
+                    <td>{m.plan}</td>
+                    <td className={styles.warning}>{m.daysLeft}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 
-      {/* REVENUE */}
       <section className={styles.section}>
-        <h2>Revenue Overview</h2>
+        <h2>📢 Announcements</h2>
 
-        <div className={styles.revenueRow}>
-          <div>
-            <strong>Daily price:</strong> KES {revenue?.daily_price ?? 0}          </div>
-          <div>
-            <strong>Monthly price:</strong> KES {revenue?.monthly_price ?? 0}
+        {announcements.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>No announcements yet.</p>
           </div>
-        </div>
-
-        <RevenuePreview data={revenueSeries} />
+        ) : (
+          <div className={styles.announcementGrid}>
+            {announcements.slice(0, 6).map((a) => (
+              <div key={a.id} className={styles.announcementCard}>
+                <div className={styles.announcementHeader}>
+                  <h3>{a.title}</h3>
+                  <span className={`${styles.tag} ${styles[a.tag]}`}>
+                    {a.tag}
+                  </span>
+                </div>
+                <p>{a.message}</p>
+                <small>
+                  {new Date(a.created_at).toLocaleString()}
+                </small>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
 }
 
-/* =========================
-   SMALL COMPONENTS
-========================= */
-
 function StatCard({ label, value }) {
   return (
-    <div className={styles.card}>
-      <p className={styles.cardLabel}>{label}</p>
-      <p className={styles.cardValue}>{value}</p>
+    <div className={styles.statCard}>
+      <h2>{value}</h2>
+      <p>{label}</p>
     </div>
-  );
-}
-
-function RevenuePreview({ data }) {
-  if (!data.length) return <p>No revenue data</p>;
-
-  return (
-    <ul className={styles.revenueList}>
-      {data.slice(-7).map((d) => (
-        <li key={d.date}>
-          {d.date}: <strong>KES {d.amount}</strong>
-        </li>
-      ))}
-    </ul>
   );
 }
