@@ -26,7 +26,7 @@ const TrainerMemberDetails = () => {
       <div className={styles.headerCard}>
         <div className={styles.profileInfo}>
           <div className={styles.avatar}>
-            {member.full_name.charAt(0)}
+            {member.full_name?.charAt(0)?.toUpperCase() || "?"}
           </div>
 
           <div>
@@ -64,8 +64,27 @@ const TrainerMemberDetails = () => {
       <div className={styles.grid}>
         <div className={styles.card}>
           <h3>Contact</h3>
-          <p><Mail size={14}/> {member.email}</p>
-          <p><Phone size={14}/> {member.phone || "—"}</p>
+
+          <p className={styles.contactItem}>
+            <Mail size={14}/> 
+            <a href={`mailto:${member.email}`}>{member.email}</a>
+          </p>
+
+          <p className={styles.contactItem}>
+            <Phone size={14}/> 
+            {member.phone ? (
+              <a href={`tel:${member.phone}`}>{member.phone}</a>
+            ) : (
+              "—"
+            )}
+          </p>
+        </div>
+
+        <div className={styles.card}>
+          <h3>Assigned Trainer</h3>
+          <p><strong>{member.trainer?.full_name}</strong></p>
+          <p><Mail size={14}/> {member.trainer?.email}</p>
+          <p><Phone size={14}/> {member.trainer?.phone || "—"}</p>
         </div>
 
         <div className={styles.card}>

@@ -1,25 +1,12 @@
 import { useEffect, useState } from "react";
-import {
-  updateSchedule,
-  createSchedule
-} from "../../../services/trainerServiceSchedule";
-import api from "../../../api/axios";
-import "./TrainerSchedule.module.css";
 import { useNavigate } from "react-router-dom";
-
+import api from "../../../api/axios";
+import { updateSchedule } from "../../../services/trainerServiceSchedule";
+import styles from "./TrainerSchedule.module.css";
 
 const TrainerSchedule = () => {
   const [sessions, setSessions] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [plans, setPlans] = useState([]);
-
-  const [form, setForm] = useState({
-    client_id: "",
-    plan_id: "",
-    workout_date: "",
-    start_time: "",
-    end_time: ""
-  });
+  const navigate = useNavigate();
 
   const load = async () => {
     try {
@@ -31,22 +18,8 @@ const TrainerSchedule = () => {
     }
   };
 
-
-
-  const loadClients = async () => {
-    const res = await api.get("/trainer/members");
-    setClients(res.data.items || []);
-  };
-
-  const loadPlans = async () => {
-    const res = await api.get("/trainer/workout-plans");
-    setPlans(res.data.items || []);
-  };
-
   useEffect(() => {
     load();
-    loadClients();
-    loadPlans();
   }, []);
 
   const markCompleted = async (id) => {
@@ -54,25 +27,7 @@ const TrainerSchedule = () => {
     load();
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    await createSchedule(form);
-
-    setForm({
-      client_id: "",
-      plan_id: "",
-      workout_date: "",
-      start_time: "",
-      end_time: ""
-    });
-
-    load();
-  };
-
-  const navigate = useNavigate();
-
-
-    const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm("Delete this session?")) return;
 
     try {
@@ -84,65 +39,53 @@ const TrainerSchedule = () => {
     }
   };
 
-
   return (
-    <div className="trainer-schedule">
-      <h2 className="trainer-schedule-title">My Schedule</h2>
+    <div className={styles['trainer-schedule']}>
+      <h2 className={styles['trainer-schedule-title']}>My Schedule</h2>
 
       {sessions.length === 0 ? (
-        <div className="empty-state">No sessions assigned yet.</div>
+        <div className={styles['empty-state']}>No sessions assigned yet.</div>
       ) : (
-        <div className="trainer-table-wrapper">
-          <table className="trainer-table">
+        <div className={styles['trainer-table-wrapper']}>
+          <table className={styles['trainer-table']}>
             <thead>
               <tr>
                 <th>Date</th>
                 <th>Client</th>
                 <th>Status</th>
-                <th />
+                <th>Actions</th>
               </tr>
             </thead>
-
             <tbody>
-              {sessions.map(s => (
+              {sessions.map((s) => (
                 <tr
                   key={s.id}
                   onClick={() => navigate(`/trainer/schedule/${s.id}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  {/* DATE */}
-                  <td>
-                    {new Date(s.start_time).toLocaleDateString()}
-                  </td>
-
-                  {/* CLIENT + PLAN */}
+                  <td>{new Date(s.start_time).toLocaleDateString()}</td>
                   <td>
                     <strong>{s.member_name}</strong>
                     <div style={{ fontSize: 13, color: "#777" }}>
                       {s.plan_title}
                     </div>
                   </td>
-
-                  {/* STATUS */}
                   <td>
-                    <span className={`status-badge status-${s.status}`}>
+                    <span className={`${styles['status-badge']} ${styles[`status-${s.status}`]}`}>
                       {s.status}
                     </span>
                   </td>
-
-                  {/* ACTIONS */}
-                  <td onClick={e => e.stopPropagation()}>
+                  <td onClick={(e) => e.stopPropagation()}>
                     {s.status === "scheduled" && (
                       <button
-                        className="trainer-btn btn-complete"
+                        className={styles['trainer-btn'] + ' ' + styles['btn-complete']}
                         onClick={() => markCompleted(s.id)}
                       >
                         Complete
                       </button>
                     )}
-
                     <button
-                      className="trainer-btn btn-delete"
+                      className={styles['trainer-btn'] + ' ' + styles['btn-delete']}
                       onClick={() => handleDelete(s.id)}
                     >
                       Delete
@@ -151,12 +94,11 @@ const TrainerSchedule = () => {
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default TrainerSchedule;

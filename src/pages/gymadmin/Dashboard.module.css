@@ -1,36 +1,43 @@
+/* Dashboard.module.css */
+
+/* ---- CONTAINER ---- */
 .dashboard {
   padding: 32px;
   background: #f4f6f9;
   min-height: 100vh;
-}
-
-.title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
   color: #111827;
 }
 
-/* CARDS */
+/* ---- MAIN TITLE ---- */
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #111827;
+}
+
+/* ---- STAT CARDS ---- */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .statCard {
-  background: white;
+  background: #ffffff;
   padding: 28px;
   border-radius: 16px;
-  transition: all 0.25s ease;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  cursor: default;
+  transition: all 0.3s ease;
 }
 
 .statCard:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 .statCard h2 {
@@ -42,29 +49,30 @@
 
 .statCard p {
   margin-top: 8px;
-  color: #6b7280;
   font-size: 13px;
   letter-spacing: 1px;
+  color: #6b7280;
   text-transform: uppercase;
 }
 
-/* SECTION */
+/* ---- SECTIONS ---- */
 .section {
-  margin-top: 40px;
-  background: white;
+  background: #ffffff;
   padding: 28px;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  margin-top: 40px;
 }
 
 .section h2 {
-  margin-bottom: 20px;
   font-size: 22px;
   font-weight: 700;
+  margin-bottom: 20px;
+  color: #111827;
 }
 
-/* TABLE */
+/* ---- TABLES ---- */
 .tableContainer {
   overflow-x: auto;
 }
@@ -72,6 +80,9 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .table th {
@@ -81,11 +92,14 @@
   padding: 14px;
   background: #f9fafb;
   color: #6b7280;
+  font-weight: 600;
 }
 
 .table td {
   padding: 14px;
   border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  color: #374151;
 }
 
 .table tr:hover {
@@ -93,11 +107,11 @@
 }
 
 .warning {
-  color: #d97706;
+  color: #b45309;
   font-weight: 700;
 }
 
-/* ANNOUNCEMENTS */
+/* ---- ANNOUNCEMENTS GRID ---- */
 .announcementGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -109,13 +123,13 @@
   padding: 20px;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   transition: all 0.25s ease;
-  cursor: pointer;
 }
 
 .announcementCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.06);
 }
 
 .announcementHeader {
@@ -129,12 +143,13 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: #111827;
 }
 
 .announcementCard p {
   font-size: 14px;
   color: #4b5563;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .announcementCard small {
@@ -142,7 +157,7 @@
   color: #9ca3af;
 }
 
-/* TAGS */
+/* ---- TAGS ---- */
 .tag {
   font-size: 11px;
   padding: 4px 8px;
@@ -151,28 +166,46 @@
   text-transform: capitalize;
 }
 
-.general {
-  background: #e5e7eb;
-  color: #374151;
-}
+.general { background: #e5e7eb; color: #374151; }
+.alert   { background: #fee2e2; color: #b91c1c; }
+.event   { background: #dbeafe; color: #1e40af; }
+.update  { background: #ecfdf5; color: #065f46; }
 
-.alert {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.event {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.update {
-  background: #ecfdf5;
-  color: #059669;
-}
-
-.loading {
+/* ---- LOADING / EMPTY STATES ---- */
+.loading, .emptyState {
   text-align: center;
-  padding: 60px;
+  padding: 60px 20px;
   font-weight: 600;
+  color: #6b7280;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .announcementGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .statCard h2 {
+    font-size: 24px;
+  }
+
+  .statCard p {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .section {
+    padding: 20px;
+  }
 }

@@ -35,11 +35,23 @@ const TrainerMembers = () => {
   };
 
   const filteredMembers = useMemo(() => {
-    return members.filter((m) =>
-      `${m.first_name} ${m.last_name}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
+    const term = search.trim().toLowerCase();
+
+    if (!term) return members;
+
+    return members.filter((m) => {
+      const firstName = (m?.first_name || "").toLowerCase();
+      const lastName = (m?.last_name || "").toLowerCase();
+      const fullName = `${firstName} ${lastName}`.trim();
+      const email = (m?.email || "").toLowerCase();
+      const phone = (m?.phone || "").toLowerCase();
+
+      return (
+        fullName.includes(term) ||
+        email.includes(term) ||
+        phone.includes(term)
+      );
+    });
   }, [members, search]);
 
   return (

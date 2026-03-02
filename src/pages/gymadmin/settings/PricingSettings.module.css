@@ -1,0 +1,106 @@
+/* PricingSettings.module.css */
+
+/* ---- Card Container ---- */
+.card {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+}
+
+/* ---- Heading ---- */
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ---- Form Fields ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.field label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: #374151;
+}
+
+.field input {
+  padding: 0.65rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.field input:focus {
+  border-color: #2563eb; /* Blue focus */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+/* ---- Save Button ---- */
+.save {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.save:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.save:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ---- Status Messages ---- */
+.pending, .approved {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.pending {
+  background-color: #fef3c7; /* Yellow-100 */
+  color: #78350f; /* Yellow-800 */
+}
+
+.approved {
+  background-color: #d1fae5; /* Green-100 */
+  color: #065f46; /* Green-800 */
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .card {
+    padding: 1.5rem;
+  }
+}

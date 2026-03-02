@@ -42,50 +42,92 @@ export default function TrainersList() {
 
   return (
     <div className={styles.container}>
-      <header>
+      <header className={styles.header}>
         <h1>Trainers</h1>
-        <button onClick={() => setShowForm(true)}>Invite Trainer</button>
+        <button
+          className={styles.inviteBtn}
+          onClick={() => {
+            setEditing(null);
+            setShowForm(true);
+          }}
+        >
+          Invite Trainer
+        </button>
       </header>
 
-      <table>
+      <table className={styles.table}>
         <thead>
           <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Status</th>
-            <th />
+            <th className={styles.actionsCol}>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {trainers.map((t) => (
-            <tr key={t.id}>
-              <td
-                style={{ cursor: "pointer", fontWeight: "600", color: "#2563eb" }}
-                onClick={() => navigate(`/gymadmin/trainers/${t.id}`)}
-              >
-                {t.first_name} {t.last_name}
-              </td>
-              <td>{t.email}</td>
-              <td>
-                {t.invite_status === "pending" && "Pending"}
-                {t.invite_status === "accepted" && t.is_active && "Active"}
-                {t.deleted_at && "Deleted"}
-              </td>
-              <td>
-                {t.invite_status === "pending" && (
-                  <button onClick={() => resendInvite(t.id)}>Resend</button>
-                )}
-                <button onClick={() => {
-                  setEditing(t);
-                  setShowForm(true);
-                }}>
-                  Edit
-                </button>
-                <button onClick={() => remove(t.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
+          {trainers.map((t) => {
+            const fullName = `${t.first_name || ""} ${t.last_name || ""}`.trim();
+
+            let status = "Active";
+            if (t.deleted_at) status = "Deleted";
+            else if (t.invite_status === "pending") status = "Pending";
+
+            return (
+              <tr key={t.id}>
+                <td
+                  className={styles.nameCell}
+                  onClick={() => navigate(`/gymadmin/trainers/${t.id}`)}
+                >
+                  {fullName || "—"}
+                </td>
+
+                <td>{t.email}</td>
+
+                <td>
+                  <span
+                    className={`${styles.badge} ${
+                      status === "Active"
+                        ? styles.active
+                        : status === "Pending"
+                        ? styles.pending
+                        : styles.deleted
+                    }`}
+                  >
+                    {status}
+                  </span>
+                </td>
+
+                <td className={styles.actions}>
+                  {t.invite_status === "pending" && !t.deleted_at && (
+                    <button
+                      className={styles.resendBtn}
+                      onClick={() => resendInvite(t.id)}
+                    >
+                      Resend
+                    </button>
+                  )}
+
+                  <button
+                    className={styles.editBtn}
+                    onClick={() => {
+                      setEditing(t);
+                      setShowForm(true);
+                    }}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => remove(t.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 

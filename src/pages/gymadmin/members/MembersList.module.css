@@ -1,59 +1,178 @@
+/* MembersList.module.css */
+
+/* ---- Container ---- */
 .container {
-  padding: 20px;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
 }
 
+/* ---- Header Row ---- */
 .headerRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerRow h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
 }
 
 .headerRow button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #111827;
+  gap: 0.4rem;
+  background-color: #2563eb;
   color: white;
+  padding: 0.5rem 1rem;
   border: none;
-  padding: 8px 14px;
   border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
+.headerRow button:hover {
+  background-color: #1d4ed8;
+}
+
+/* ---- Search Bar ---- */
 .searchWrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 16px 0;
-  background: #f3f4f6;
-  padding: 8px 12px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  background-color: #f9fafb;
 }
 
 .searchWrapper input {
   border: none;
-  background: transparent;
   outline: none;
-  width: 100%;
+  flex: 1;
+  font-size: 0.95rem;
+  background-color: transparent;
 }
 
+/* ---- Table ---- */
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   border-radius: 12px;
   overflow: hidden;
 }
 
-.table th,
-.table td {
-  padding: 12px;
+.table th, .table td {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-size: 0.95rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.table tr:hover {
-  background: #f9fafb;
+.table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #374151;
 }
 
-.table button {
-  margin-right: 6px;
+.table tr:hover {
+  background-color: #f9fafb;
+}
+
+/* ---- Table Buttons ---- */
+.table td button {
+  margin-right: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.table td button:first-of-type {
+  background-color: #10b981; /* green */
+  color: white;
+}
+
+.table td button:first-of-type:hover {
+  background-color: #059669;
+}
+
+.table td button:last-of-type {
+  background-color: #ef4444; /* red */
+  color: white;
+}
+
+.table td button:last-of-type:hover {
+  background-color: #b91c1c;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .searchWrapper {
+    margin-bottom: 1rem;
+  }
+
+  .table th, .table td {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .table td button {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .table thead, .table tbody, .table tr, .table th, .table td {
+    display: block;
+  }
+
+  .table tr {
+    margin-bottom: 1rem;
+  }
+
+  .table th {
+    display: none;
+  }
+
+  .table td {
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .table td::before {
+    position: absolute;
+    left: 1rem;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .table td:nth-of-type(1)::before { content: "Email"; }
+  .table td:nth-of-type(2)::before { content: "Plan"; }
+  .table td:nth-of-type(3)::before { content: "Status"; }
+  .table td:nth-of-type(4)::before { content: "Actions"; }
 }

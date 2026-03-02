@@ -1,288 +1,176 @@
-/* Main Container */
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: 24px;
+  background: #f4f6f9;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
 }
 
 /* Back Button */
 .backBtn {
-  background: white;
-  border: 1px solid #e5e7eb;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  align-self: flex-start;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .backBtn:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  color: #111827;
-  transform: translateX(-4px);
+  text-decoration: underline;
 }
 
-/* Header Profile Card */
+/* Header Card */
 .headerCard {
-  background: white;
-  padding: 32px;
+  background: #ffffff;
   border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  padding: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 24px;
 }
 
 .profileInfo {
   display: flex;
+  gap: 16px;
   align-items: center;
-  gap: 20px;
 }
 
+/* Avatar */
 .avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
-  font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
 }
 
-.nameCol {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.nameCol h1 {
-  font-size: 28px;
-  font-weight: 700;
+.profileInfo h1 {
   margin: 0;
+  font-size: 22px;
+  font-weight: 700;
   color: #111827;
-  letter-spacing: -0.01em;
 }
 
-.badges {
+/* Tags */
+.tags {
+  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.tag {
-  display: inline-flex;
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #dbeafe;
+.tags span {
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
-.planTag {
-  display: inline-flex;
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  background: #ecfdf5;
-  color: #059669;
-  border: 1px solid #d1fae5;
+.activeBadge {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.inactiveBadge {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
 }
 
 /* Actions */
 .actions {
   display: flex;
   gap: 12px;
+  margin-top: 12px;
 }
 
-.btn {
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.actions button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.secondary {
-  background: white;
-  border: 1px solid #e5e7eb;
-  color: #374151;
-}
-
-.secondary:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  color: #111827;
-}
-
-.primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  gap: 6px;
   border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s ease;
+  background: #2563eb;
   color: white;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.primary:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-  transform: translateY(-1px);
+.actions button:hover {
+  background: #1e40af;
 }
 
-/* Grid Layout */
+/* Grid */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-}
-
-/* Info Card */
-.card {
-  background: white;
-  padding: 28px;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
+/* Cards */
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
 .card h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: 600;
   color: #111827;
 }
 
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.row:first-child {
-  padding-top: 0;
-}
-
-.label {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #6b7280;
+/* Contact Items */
+.contactItem {
   display: flex;
   align-items: center;
-}
-
-.value {
-  font-size: 15px;
-  color: #111827;
-  font-weight: 500;
-}
-
-/* Notes Section */
-.notes {
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  gap: 8px;
+  margin-bottom: 10px;
   font-size: 14px;
-  line-height: 1.6;
   color: #374151;
-  min-height: 80px;
 }
 
-.activeBadge {
-  background: #e6f9ec;
-  color: #1f9d55;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.contactItem a {
+  color: #2563eb;
+  text-decoration: none;
 }
 
-.inactiveBadge {
-  background: #fdeaea;
-  color: #d64545;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+.contactItem a:hover {
+  text-decoration: underline;
 }
 
+/* Notes */
+.card p {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+}
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-  .container {
-    padding: 24px 16px;
-  }
-
   .headerCard {
-    padding: 24px;
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .profileInfo {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .avatar {
-    width: 64px;
-    height: 64px;
-    font-size: 28px;
-  }
-
-  .nameCol h1 {
-    font-size: 24px;
   }
 
   .actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card {
-    padding: 20px;
+    margin-top: 16px;
   }
 }

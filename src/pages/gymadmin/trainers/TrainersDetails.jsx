@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getTrainer, deleteTrainer } from "../../../services/gymAdminService";
 import TrainerCalendar from "./TrainersCalendar";
+import styles from "./TrainersDetails.module.css";
 
 export default function TrainerDetails() {
   const { trainerId } = useParams();
@@ -20,44 +21,37 @@ export default function TrainerDetails() {
     fetchTrainer();
   }, [trainerId]);
 
-  if (!trainer) return <p>Loading...</p>;
-
-  const clients = trainer.clients || [];
+  if (!trainer) return <p className={styles.loading}>Loading...</p>;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Trainer</h1>
+    <div className={styles.wrapper}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <h1>{trainer.full_name || "Trainer"}</h1>
+          <p>{trainer.email}</p>
+        </div>
 
-      <p><strong>Email:</strong> {trainer.email}</p>
-      <p><strong>Bio:</strong> {trainer.bio || "—"}</p>
+        <div className={styles.meta}>
+          <span>📞 {trainer.phone || "No phone"}</span>
+          <span>👥 {trainer.clients?.length || 0} Members</span>
+        </div>
 
-      <TrainerCalendar trainerId={trainer.id} />
+        <button
+          className={styles.deleteBtn}
+          onClick={async () => {
+            if (window.confirm("Delete trainer?")) {
+              await deleteTrainer(trainer.id);
+              window.history.back();
+            }
+          }}
+        >
+          Delete Trainer
+        </button>
+      </div>
 
-      <hr />
-
-      <h3>Assigned Members</h3>
-
-      {clients.length === 0 ? (
-        <p>No members assigned</p>
-      ) : (
-        <ul>
-          {clients.map((client) => (
-            <li key={client.id}>{client.email}</li>
-          ))}
-        </ul>
-      )}
-
-      <button
-        style={{ marginTop: "1rem", color: "red" }}
-        onClick={async () => {
-          if (window.confirm("Delete trainer?")) {
-            await deleteTrainer(trainer.id);
-            window.history.back();
-          }
-        }}
-      >
-        Delete Trainer
-      </button>
+      <div className={styles.calendarCard}>
+        <TrainerCalendar trainerId={trainer.id} />
+      </div>
     </div>
   );
 }
