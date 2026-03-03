@@ -1,8 +1,9 @@
 import React from "react";
 import styles from "./Header.module.css";
 import { getCurrentUser } from "../../../utils/authLocal";
+import {  Menu } from "lucide-react"
 
-const Header = ({ activeTab }) => {
+export default function Header ({ activeTab, toggleSidebar }) {
   const user = getCurrentUser();
 
   const gymName =
@@ -13,6 +14,9 @@ const Header = ({ activeTab }) => {
 
   return (
     <header className={styles.header}>
+      <button className={styles.mobileMenuBtn} onClick={toggleSidebar}>
+        <Menu size={22} />
+      </button>
       <div className={styles.left}>
         <h2>{activeTab ? activeTab.toUpperCase() : "DASHBOARD"}</h2>
       </div>
@@ -27,4 +31,3 @@ const Header = ({ activeTab }) => {
   );
 };
 
-export default Header;

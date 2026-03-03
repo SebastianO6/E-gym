@@ -132,20 +132,30 @@ const TrainerDashboard = () => {
       </div>
 
       <div className={styles.card}>
-        <h2 className={styles.sectionTitle}>Latest Announcements</h2>
+        <h2 className={styles.sectionTitle}>
+          <FileText size={18} />
+          Latest Announcements
+        </h2>
 
         {announcements.length === 0 ? (
           <p className={styles.muted}>No announcements available</p>
         ) : (
-          announcements.slice(0, 3).map((item) => (
-            <div key={item.id} className={styles.announcement}>
-              <h4>{item.title}</h4>
-              <p>{item.message}</p>
-            </div>
-          ))
+          <div className={styles.announcementList}>
+            {announcements.slice(0, 3).map((item) => (
+              <div key={item.id} className={styles.announcementItem}>
+                <div className={styles.announcementIcon}>
+                  <MessageSquare size={16} />
+                </div>
+
+                <div className={styles.announcementContent}>
+                  <h4>{item.title}</h4>
+                  <p>{item.message}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
       {/* Today Sessions */}
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>

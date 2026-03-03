@@ -162,7 +162,7 @@ export default function ClientMessages() {
                   className={styles.deleteBtn}
                   onClick={() => deleteMessage(m.id)}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={14} />  
                 </button>
               )}
             </div>

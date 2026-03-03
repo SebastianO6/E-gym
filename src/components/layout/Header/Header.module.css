@@ -47,3 +47,28 @@
   font-weight: 600;
   color: #111827;
 }
+
+.mobileMenuBtn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgb(0, 0, 0);          /* make icon white */
+  padding: 8px;          /* increase tap area */
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.mobileMenuBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobileMenuBtn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .mobileMenuBtn {
+    display: block;
+  }
+}

@@ -2,14 +2,19 @@
   background: var(--sidebar-bg);
   color: white;
   height: 100vh;
-  transition: width 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
 }
 
 .open {
   width: 230px;
+  transform: translateX(0);
 }
 
 .closed {
@@ -93,4 +98,19 @@
 .logoutItem:hover {
   background-color: rgba(239, 68, 68, 0.1);
   color: #dc2626;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 230px !important;
+    transform: translateX(-100%);
+  }
+
+  .open {
+    transform: translateX(0);
+  }
+
+  .closed {
+    transform: translateX(-100%);
+  }
 }

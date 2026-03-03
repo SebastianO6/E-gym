@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";  // ✅ Import auth context
 
-const Sidebar = ({ userRole }) => {
-  const [open, setOpen] = useState(true);
+const Sidebar = ({ userRole, open ,setOpen }) => {
+
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();  // ✅ Get logout function
@@ -63,7 +63,7 @@ const Sidebar = ({ userRole }) => {
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.closed}`}>
       <div className={styles.topSection}>
         {open && <h2 className={styles.logo}>GymFlow</h2>}
-        <button className={styles.toggleBtn} onClick={() => setOpen(!open)}>
+         <button className={styles.toggleBtn} onClick={() => setOpen(!open)}>
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>

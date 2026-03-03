@@ -1,15 +1,35 @@
 .container {
   display: flex;
-  height: 100vh;
 }
 
 .contentWrapper {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  margin-left: 230px; /* same as sidebar open width */
+  transition: margin-left 0.3s ease;
 }
 
 .mainContent {
   padding: 25px;
   overflow-y: auto;
+}
+
+.expanded {
+  margin-left: 230px;
+}
+
+.collapsed {
+  margin-left: 70px;
+}
+
+@media (max-width: 768px) {
+  .expanded,
+  .collapsed {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentWrapper {
+    margin-left: 0 !important;
+  }
 }
