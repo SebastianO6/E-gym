@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.css";
-import { Dumbbell, MessageCircle, ClipboardList, Bell } from "lucide-react";
+import { Dumbbell, MessageCircle, ClipboardList, Bell} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientSchedule from "./clientSchedule";
 import api from "../../api/axios";

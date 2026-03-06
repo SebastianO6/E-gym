@@ -12,12 +12,11 @@ export default function TrainerMessages() {
   const [text, setText] = useState("");
   const [trainerId, setTrainerId] = useState(null);
 
+  const [showChatMobile, setShowChatMobile] = useState(false);
+
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // ===============================
-  // INIT
-  // ===============================
   useEffect(() => {
     const init = async () => {
       const token = getAuthToken();
@@ -52,11 +51,9 @@ export default function TrainerMessages() {
     return () => socketRef.current?.disconnect();
   }, []);
 
-  // ===============================
-  // OPEN CONVO
-  // ===============================
   const openConversation = async (client) => {
     setSelectedClient(client);
+    setShowChatMobile(true);
 
     const res = await api.get(`/trainer/chat/${client.user_id}`);
 
@@ -72,9 +69,6 @@ export default function TrainerMessages() {
     });
   };
 
-  // ===============================
-  // SEND
-  // ===============================
   const sendMessage = (e) => {
     e.preventDefault();
     if (!text.trim() || !selectedClient) return;
@@ -87,9 +81,6 @@ export default function TrainerMessages() {
     setText("");
   };
 
-  // ===============================
-  // DELETE (ONLY OWN)
-  // ===============================
   const deleteMessage = async (id, senderId) => {
     if (senderId !== trainerId) return;
 
@@ -97,15 +88,23 @@ export default function TrainerMessages() {
     setMessages((prev) => prev.filter((m) => m.id !== id));
   };
 
-  // ===============================
-  // AUTO SCROLL
-  // ===============================
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const goBack = () => {
+    setShowChatMobile(false);
+    setSelectedClient(null);
+  };
+
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${
+        showChatMobile ? styles.mobileChatActive : ""
+      }`}
+    >
+      {/* SIDEBAR */}
+
       <div className={styles.sidebar}>
         <div className={styles.sidebarHeader}>Your Clients</div>
 
@@ -121,6 +120,7 @@ export default function TrainerMessages() {
               onClick={() => openConversation(client)}
             >
               <div className={styles.userName}>{client.name}</div>
+
               <div className={styles.preview}>
                 {client.last_message || "Click to view conversation"}
               </div>
@@ -129,6 +129,8 @@ export default function TrainerMessages() {
         </div>
       </div>
 
+      {/* CHAT */}
+
       <div className={styles.chatArea}>
         {!selectedClient ? (
           <div className={styles.emptyState}>
@@ -136,8 +138,11 @@ export default function TrainerMessages() {
           </div>
         ) : (
           <>
-            {/* CHAT HEADER */}
             <div className={styles.chatHeader}>
+              <button className={styles.backBtn} onClick={goBack}>
+                ←
+              </button>
+
               Chat with {selectedClient.name}
             </div>
 
@@ -145,9 +150,7 @@ export default function TrainerMessages() {
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={
-                    msg.is_mine ? styles.msgMe : styles.msgThem
-                  }
+                  className={msg.is_mine ? styles.msgMe : styles.msgThem}
                 >
                   <div className={styles.messageBubble}>
                     <div>{msg.content}</div>
@@ -175,6 +178,7 @@ export default function TrainerMessages() {
                   </div>
                 </div>
               ))}
+
               <div ref={messagesEndRef} />
             </div>
 

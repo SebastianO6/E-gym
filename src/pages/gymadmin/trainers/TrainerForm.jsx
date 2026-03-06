@@ -61,7 +61,7 @@ export default function TrainerForm({
       <div className={styles.modal}>
         <header>
           <h2>{existingTrainer ? "Edit Trainer" : "Invite Trainer"}</h2>
-          <button onClick={onCancel}><X /></button>
+          <button className ={styles.exitButton}  onClick={onCancel}><X /></button>
         </header>
 
         <form onSubmit={submit}>

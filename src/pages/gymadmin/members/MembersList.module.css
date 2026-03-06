@@ -176,3 +176,62 @@
   .table td:nth-of-type(3)::before { content: "Status"; }
   .table td:nth-of-type(4)::before { content: "Actions"; }
 }
+
+@media (max-width: 480px) {
+
+  .table {
+    display: block;
+    width: 100%;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    display: block;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    padding: 0.6rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .table td {
+    display: block;
+    padding: 0.6rem 0.6rem 0.6rem 50%;
+    position: relative;
+    font-size: 0.9rem;
+    border-bottom: none;
+  }
+
+  .table td::before {
+    position: absolute;
+    left: 0.6rem;
+    width: 45%;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .table td:nth-of-type(1)::before { content: "Email"; }
+  .table td:nth-of-type(2)::before { content: "Plan"; }
+  .table td:nth-of-type(3)::before { content: "Status"; }
+  .table td:nth-of-type(4)::before { content: "Actions"; }
+
+  /* 🔴 ACTION BUTTON FIX */
+  .table td:nth-of-type(4) {
+    padding-left: 0;
+  }
+
+  .table td:nth-of-type(4) button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+  }
+}

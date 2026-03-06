@@ -171,10 +171,7 @@ const AddMemberModal = ({ onClose, onCreated }) => {
             Plan
             <select value={form.plan} onChange={(e) => update("plan", e.target.value)}>
               <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="annual">Annual</option>
             </select>
           </label>
 

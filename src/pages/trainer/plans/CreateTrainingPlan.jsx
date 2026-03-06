@@ -83,10 +83,10 @@ export default function CreateTrainingPlan() {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`{styles.container} ${selectedClient ? styles.chatOpen : ""}`}>
       <div className={styles.header}>
         <h1 className={styles.title}>Create Training Plan</h1>
-      </div>
+      </div>  
 
       <div className={styles.mainForm}>
 

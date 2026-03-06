@@ -1,102 +1,133 @@
+/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 2000;
 }
 
+/* Modal */
 .modal {
-  background: #ffffff;
+  background: white;
   width: 420px;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  overflow: hidden;
-  animation: scaleIn 0.2s ease-out;
+  max-width: 92%;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.2);
+  animation: modalPop 0.2s ease;
 }
 
-@keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes modalPop {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-header {
+/* Header */
+.modal header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.2rem 1.4rem;
-  background: #0f172a;
-  color: white;
+  margin-bottom: 18px;
 }
 
-header h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
+.modal h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
-header button {
-  background: transparent;
+.modal header button {
   border: none;
-  color: white;
+  background: none;
   cursor: pointer;
 }
 
+/* Form */
 form {
-  padding: 1.4rem;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 10px;
 }
 
 label {
-  font-size: 0.75rem;
-  color: #475569;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: #374151;
 }
 
 input {
-  padding: 0.65rem 0.75rem;
+  padding: 8px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #d1d5db;
   font-size: 0.9rem;
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
 input:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
 }
 
-button {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+/* Error */
+.error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+/* Submit button */
+form button {
+  margin-top: 8px;
+  background: #2563eb;
   color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
 }
 
-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(37,99,235,0.25);
+form button:hover {
+  background: #1d4ed8;
 }
 
-button:disabled {
+form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.error {
-  color: #dc2626;
-  font-size: 0.8rem;
-  background: #fee2e2;
-  padding: 0.5rem;
-  border-radius: 6px;
+.modal header .exitButton {
+  background-color: #ff1414; /* Light gray background */
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  /* This ensures the background is always visible */
+  opacity: 1;
 }
+
+/* Optional: You can still have hover effects if you want */
+.modal header .exitButton:hover {
+  background-color: #611010;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .modal {
+    width: 95%;
+  }
+}
+

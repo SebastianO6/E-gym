@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./sidebar.module.css";
 import { 
@@ -11,7 +10,8 @@ import {
   X, 
   TrendingUp,
   LogOut,
-  CreditCard,  // ✅ Add this import
+  CreditCard,
+  Send , // ✅ Add this import
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";  // ✅ Import auth context
 
@@ -46,7 +46,7 @@ const Sidebar = ({ userRole, open ,setOpen }) => {
     client: [
       { label: "Dashboard", icon: LayoutDashboard, to: "/client" },
       { label: "My Plan", icon: TrendingUp, to: "/client/plan" },
-      { label: "Messages", icon: Bell, to: "/client/messages" },
+      { label: "Messages", icon: Send, to: "/client/messages" },
       { label: "Announcements", icon: Bell, to: "/client/announcements" },
       { label: "Settings", icon: Settings, to: "/client/settings" }, 
     ],
