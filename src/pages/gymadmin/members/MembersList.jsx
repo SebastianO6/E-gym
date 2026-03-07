@@ -4,12 +4,14 @@ import AddMemberModal from "./AddMemberModal";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus } from "lucide-react";
 import { listMembers, deleteMember } from "../../../services/gymAdminService";
+import EditMemberModal from "./EditMemberModal";
 
 const MembersList = () => {
   const navigate = useNavigate();
   const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
+  const [editingMember, setEditingMember] = useState(null) 
 
   const loadMembers = async () => {
     try {
@@ -68,6 +70,9 @@ const MembersList = () => {
                 <button onClick={() => navigate(`/gymadmin/members/${m.id}`)}>
                   View
                 </button>
+                <button onClick={() => setEditingMember(m)}>
+                  Edit
+                </button>
                 <button
                   onClick={async () => {
                     try {
@@ -94,6 +99,13 @@ const MembersList = () => {
           onClose={() => setShowAdd(false)}
           onCreated={loadMembers}
         />
+      )}
+
+      {editingMember && (
+        <EditMemberModal
+          member={editingMember}
+          onClose={() => setEditingMember(null)}
+        />  
       )}
     </div>
   );

@@ -33,4 +33,21 @@ export const getPlatformRevenue = async () => {
 export const deleteGym = (gymId) =>
   api.delete(`/superadmin/gyms/${gymId}`);
 
+export const getExpiringGyms = async () => {
+  const res = await api.get("/superadmin/gyms/expiring");
+  return res.data;
+};
+
+export const getGymSubscription = async (gymId) => {
+  const res = await api.get(`/superadmin/gyms/${gymId}/subscription`);
+  return res.data;
+};
+
+export const renewGymSubscription = async (gymId, plan) => {
+  const res = await api.post(`/superadmin/gyms/${gymId}/renew`, {
+    plan,
+  });
+  return res.data;
+};
+
 

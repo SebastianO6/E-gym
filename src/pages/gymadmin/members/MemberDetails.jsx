@@ -8,7 +8,6 @@ import {
 } from "../../../services/gymAdminService";
 import styles from "./MemberDetails.module.css";
 import RenewModal from "./RenewModal";
-import PaymentHistory from "./PaymentHistory";
 
 export default function MemberDetails() {
   const { memberId } = useParams();
@@ -34,10 +33,8 @@ export default function MemberDetails() {
       setMember(memberData);
 
       const validTrainers = (trainersData || []).filter(
-        t => t.role === "trainer"
+        (t) => t.role === "trainer"
       );
-
-
 
       setTrainers(validTrainers);
       setTrainerId(memberData?.trainer_id || "");
@@ -61,9 +58,8 @@ export default function MemberDetails() {
 
     try {
       await assignTrainerToMember(memberId, Number(trainerId));
-      await load()
+      await load();
       alert("Trainer assigned successfully");
-      load();
     } catch (err) {
       console.error(err);
       alert("Failed to assign trainer");
@@ -73,89 +69,115 @@ export default function MemberDetails() {
   if (loading) return <p>Loading member…</p>;
   if (!member) return <p>Member not found</p>;
 
+  const fullName =
+    `${member.first_name || ""} ${member.last_name || ""}`.trim() ||
+    "Not provided";
+
   return (
     <div className={styles.container}>
-      <h2>Member Details</h2>
+      <h2 className={styles.pageTitle}>Member Profile</h2>
 
       {/* MEMBER INFO */}
-      <div className={styles.card}>
-        <p><b>Email:</b> {member.email}</p>
-        <p><b>Status:</b> {member.status}</p>
-        <p><b>Plan:</b> {member.subscription?.plan || "—"}</p>
+      <div className={styles.infoGrid}>
+        <div className={styles.card}>
+          <h3>Member Information</h3>
 
-        <button
-          className={styles.primaryBtn}
-          onClick={() => setShowRenew(true)}
-        >
-          Renew Membership
-        </button>
+          <div className={styles.infoRow}>
+            <span>Name</span>
+            <strong>{fullName}</strong>
+          </div>
+
+          <div className={styles.infoRow}>
+            <span>Email</span>
+            <strong>{member.email}</strong>
+          </div>
+
+          <div className={styles.infoRow}>
+            <span>Phone</span>
+            <strong>{member.phone || "Not provided"}</strong>
+          </div>
+
+          <div className={styles.infoRow}>
+            <span>Status</span>
+            <strong className={styles.status}>{member.status}</strong>
+          </div>
+
+          <div className={styles.infoRow}>
+            <span>Plan</span>
+            <strong>{member.subscription?.plan || "—"}</strong>
+          </div>
+
+          <button
+            className={styles.primaryBtn}
+            onClick={() => setShowRenew(true)}
+          >
+            Renew Membership
+          </button>
+        </div>
+
+        {/* TRAINER ASSIGNMENT */}
+        <div className={styles.card}>
+          <h3>Assign Trainer</h3>
+
+          <select
+            value={trainerId}
+            onChange={(e) => setTrainerId(e.target.value)}
+          >
+            <option value="">Select trainer</option>
+
+            {trainers.map((t) => {
+              const label =
+                `${t.first_name || ""} ${t.last_name || ""}`.trim() ||
+                t.email ||
+                `Trainer #${t.id}`;
+
+              return (
+                <option key={t.id} value={t.id}>
+                  {label}
+                </option>
+              );
+            })}
+          </select>
+
+          <button
+            onClick={assignTrainer}
+            className={styles.secondaryBtn}
+          >
+            Assign Trainer
+          </button>
+        </div>
       </div>
-
-      <hr />
-
-      {/* ASSIGN TRAINER */}
-      <div className={styles.card}>
-        <h3>Assign Trainer</h3>
-
-        <select
-          value={trainerId}
-          onChange={e => setTrainerId(e.target.value)}
-        >
-          <option value="">Select trainer</option>
-          {trainers.map(t => {
-            const label =
-              `${t.first_name || ""} ${t.last_name || ""}`.trim() ||
-              t.email ||
-              `Trainer #${t.id}`;
-
-            return (
-              <option key={t.id} value={t.id}>
-                {label}
-              </option>
-            );
-          })}
-
-        </select>
-
-        <button
-          onClick={assignTrainer}
-          className={styles.secondaryBtn}
-        >
-          Assign
-        </button>
-      </div>
-
-      <hr />
 
       {/* PAYMENTS */}
-      <h3>Payment History</h3>
+      <div className={styles.paymentSection}>
+        <h3>Payment History</h3>
 
-      {payments.length === 0 ? (
-        <p>No payments yet</p>
-      ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map(p => (
-              <tr key={p.id}>
-                <td>{new Date(p.created_at).toLocaleDateString()}</td>
-                <td>{p.amount}</td>
-                <td>{p.method}</td>
-                <td>{p.status}</td>
+        {payments.length === 0 ? (
+          <p>No payments yet</p>
+        ) : (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {payments.map((p) => (
+                <tr key={p.id}>
+                  <td>{new Date(p.created_at).toLocaleDateString()}</td>
+                  <td>KES {p.amount}</td>
+                  <td>{p.method}</td>
+                  <td>{p.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
-      <PaymentHistory memberId={member.id} />
 
       {showRenew && (
         <RenewModal

@@ -13,6 +13,8 @@ import NotFound from "../pages/common/NotFound";
 import SaDashboard from "../pages/superadmin/Dashboard";
 import SaAllGyms from "../pages/superadmin/AllGyms";
 import SaGymDetails from "../pages/superadmin/GymDetails";
+import SuperAdminSettings from "../pages/superadmin/settings/SuperAdminSettings";
+import SuperAdminAuditLogs from "../pages/superadmin/audit-logs/SuperAdminAuditLogs";
 
 
 
@@ -82,6 +84,8 @@ export default function AppRouter() {
         <Route path="gyms" element={<SaAllGyms />} />
         <Route path="gyms/:gymId" element={<SaGymDetails />} />
         <Route path="pricing" element={<PricingApproval />} />
+        <Route path="settings" element={<SuperAdminSettings />} />
+        <Route path="audit-logs" element={<SuperAdminAuditLogs />} />
       </Route>
 
 

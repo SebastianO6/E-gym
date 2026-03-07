@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building, Users, Activity } from "lucide-react";
+import { Building, Users } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import { getAllGyms, getAllUsers } from "../../services/superadminService";
 import PlatformRevenue from "./PlatformRevenue";
+import { getExpiringGyms } from "../../services/superadminService";
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
   const [gyms, setGyms] = useState([]);
   const [users, setUsers] = useState([]);
+  const [expiringGyms, setExpiringGyms] = useState([])
 
   useEffect(() => {
     load();
@@ -20,13 +22,16 @@ const SuperAdminDashboard = () => {
     try {
       setLoading(true);
 
-      const [gymsData, usersData] = await Promise.all([
+      const [gymsData, usersData, expiring] = await Promise.all([
         getAllGyms(),
         getAllUsers(),
+        getExpiringGyms(),
       ]);
 
       setGyms(gymsData || []);
       setUsers(usersData || []);
+      setExpiringGyms(expiring || []);
+
     } catch (err) {
       console.error("Dashboard load error:", err);
     } finally {
@@ -84,6 +89,46 @@ const SuperAdminDashboard = () => {
       </div>
 
       <PlatformRevenue />
+
+      <div className={styles.sectionCard}>
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>⚠️ Gyms Expiring Soon</h3>
+        </div>
+
+        {expiringGyms.length === 0 ? (
+          <p>No gyms expiring in the next 3 days.</p>
+        ) : (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Gym</th>
+                <th>Plan</th>
+                <th>Days Left</th>
+                <th />
+              </tr>
+            </thead>
+
+            <tbody>
+              {expiringGyms.map((g) => (
+                <tr key={g.gym_id}>
+                  <td>{g.gym_name}</td>
+                  <td>{g.plan}</td>
+                  <td>{g.days_left}</td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        navigate(`/superadmin/gyms/${g.gym_id}`)
+                      }
+                    >
+                      Manage
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       <div className={styles.sectionCard}>
         <div className={styles.cardHeader}>

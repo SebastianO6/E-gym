@@ -19,7 +19,8 @@ export default function ClientPlan() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>{plan.trainer_name} {plan.title}</h1>
+        <h1>Trainer: {plan.trainer_name} </h1>
+        <h2>{plan.title}</h2>
       </div>
 
       <div className={styles.planCard}>

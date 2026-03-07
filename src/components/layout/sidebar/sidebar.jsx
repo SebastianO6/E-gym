@@ -11,7 +11,9 @@ import {
   TrendingUp,
   LogOut,
   CreditCard,
-  Send , // ✅ Add this import
+  Send ,
+  Shield,
+  PersonStanding, // ✅ Add this import
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";  // ✅ Import auth context
 
@@ -27,11 +29,12 @@ const Sidebar = ({ userRole, open ,setOpen }) => {
       { label: "Gyms", icon: Building2, to: "/superadmin/gyms" },
       { label: "Pricing Approvals", icon: CreditCard, to: "/superadmin/pricing" }, 
       { label: "Settings", icon: Settings, to: "/superadmin/settings" },
+      { label: "Audit Logs", icon: Shield, to: "/superadmin/audit-logs" }, 
     ],
     gymadmin: [
       { label: "Dashboard", icon: LayoutDashboard, to: "/gymadmin" },
       { label: "Clients", icon: Users, to: "/gymadmin/members" },
-      { label: "Trainers", icon: Users, to: "/gymadmin/trainers" }, 
+      { label: "Trainers", icon: PersonStanding, to: "/gymadmin/trainers" }, 
       { label: "Announcements", icon: Bell, to: "/gymadmin/announcements" },
       { label: "Settings", icon: Settings, to: "/gymadmin/settings" },
       { label: "Pricing Settings", icon: CreditCard, to: "/gymadmin/settings/pricing" },
@@ -62,7 +65,7 @@ const Sidebar = ({ userRole, open ,setOpen }) => {
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.closed}`}>
       <div className={styles.topSection}>
-        {open && <h2 className={styles.logo}>GymFlow</h2>}
+        {open && <h2 className={styles.logo}>E-Gym</h2>}
          <button className={styles.toggleBtn} onClick={() => setOpen(!open)}>
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>

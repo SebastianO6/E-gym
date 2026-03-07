@@ -6,13 +6,15 @@ import ConfirmationModal from "./common/ConfirmationModal";
 import styles from "./AllGyms.module.css";
 import { getAllGyms } from "../../services/superadminService";
 import api from "../../api/axios";
-
+import EditGymModal from "./EditGymModal"
+import { Pencil } from "lucide-react"
 const AllGyms = () => {
   const navigate = useNavigate();
   const [gyms, setGyms] = useState([]);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [editingGym, setEditingGym] = useState(null)
 
   useEffect(() => {
     loadGyms();
@@ -80,12 +82,26 @@ const AllGyms = () => {
               <td>{g.status || "active"}</td>
               <td className={styles.actions}>
                 <Eye onClick={() => navigate(`/superadmin/gyms/${g.id}`)} />
+                <Pencil onClick={() => setEditingGym(g)} />
                 <Trash2 onClick={() => setConfirmDelete(g.id)} />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {editingGym && (
+        <EditGymModal
+          gym={editingGym}
+          onClose={() => setEditingGym(null)}
+          onSave={(updateGym) => {
+            setGyms((prev) => 
+              prev.map((g) => (g.id === updateGym.id ? updateGym : g))
+            );
+            setEditingGym(null);
+          }}
+          />
+      )}
 
       {showModal && (
         <AddGymModal
