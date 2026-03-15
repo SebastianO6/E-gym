@@ -1,13 +1,14 @@
-// src/context/AuthContext.jsx - FIXED VERSION
+// src/context/AuthContext.jsx
 import React, {
   createContext,
   useState,
   useEffect,
   useContext,
+  useCallback,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import { setAuth, getCurrentUser, clearAuth, getAuthToken } from "../utils/authLocal"; // ✅ Use utils version
+import { setAuth, getCurrentUser, clearAuth, getAuthToken } from "../utils/authLocal";
 import { connectSocket } from "../socket";
 
 const AuthContext = createContext(null);
@@ -15,12 +16,11 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  // ✅ Use getCurrentUser instead of getAuthLocal
+  // Initialize auth state
   const [auth, setAuthState] = useState(() => {
     const user = getCurrentUser();
     const token = getAuthToken();
-    const mustChangePassword =
-      localStorage.getItem("egym_must_change_password") === "true";
+    const mustChangePassword = localStorage.getItem("egym_must_change_password") === "true";
 
     return token && user
       ? { accessToken: token, user, mustChangePassword }
@@ -28,122 +28,122 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    setInitialized(true);
-  }, []);
-
-
-  
   const [loading, setLoading] = useState(false);
 
-  /* ----------------------------------------------------
-     Auto-connect socket when authenticated
-  ---------------------------------------------------- */
+  // ✅ LOGOUT wrapped in useCallback for stable reference
+  const logout = useCallback(() => {
+    clearAuth();
+    localStorage.removeItem("egym_must_change_password");
+    setAuthState(null);
+    navigate("/login");
+  }, [navigate]);
+
+  // Initialization effect
+  useEffect(() => setInitialized(true), []);
+
+  // Auto-connect socket when authenticated
   useEffect(() => {
     if (auth?.accessToken && !auth?.mustChangePassword) {
       connectSocket();
     }
   }, [auth?.accessToken, auth?.mustChangePassword]);
 
-  /* ----------------------------------------------------
-     LOGIN
-  ---------------------------------------------------- */
+  // Validate session every 15s
+  useEffect(() => {
+    const validateSession = async () => {
+      if (!auth?.accessToken || auth?.mustChangePassword) return;
+      try {
+        await api.get("/auth/me");
+      } catch (err) {
+        console.warn("Session invalid:", err.response?.data);
+        if ([401, 403].includes(err.response?.status)) {
+          logout();
+        }
+      }
+    };
+
+    validateSession();
+    const interval = setInterval(validateSession, 15000);
+    return () => clearInterval(interval);
+  }, [auth?.accessToken, auth?.mustChangePassword, logout]); // ✅ added missing deps
+
+  /* -------------------- LOGIN -------------------- */
   const login = async ({ email, password }) => {
-  setLoading(true);
-  try {
-    const res = await api.post("/auth/login", { email, password });
-    const data = res.data;
+    setLoading(true);
+    try {
+      const res = await api.post("/auth/login", { email, password });
+      const data = res.data;
 
-    // 🔒 FORCE PASSWORD CHANGE FLOW
-    if (data.must_change_password) {
-      localStorage.setItem("egym_temp_token", data.temp_token);
-      localStorage.setItem("egym_must_change_password", "true");
+      if (data.must_change_password) {
+        localStorage.setItem("egym_temp_token", data.temp_token);
+        localStorage.setItem("egym_must_change_password", "true");
 
-      setAuthState({
-        accessToken: data.temp_token,
+        setAuthState({
+          accessToken: data.temp_token,
+          user: data.user,
+          mustChangePassword: true,
+        });
+
+        navigate("/force-password-change");
+        return;
+      }
+
+      setAuth({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
         user: data.user,
-        mustChangePassword: true
       });
 
-      navigate("/force-password-change");
-      return;
+      localStorage.setItem("egym_must_change_password", "false");
+
+      setAuthState({
+        accessToken: data.access_token,
+        user: data.user,
+        mustChangePassword: false,
+      });
+
+      redirectByRole(data.user.role);
+    } finally {
+      setLoading(false);
     }
-
-    // ✅ NORMAL LOGIN
-    setAuth({
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
-      user: data.user
-    });
-
-    localStorage.setItem("egym_must_change_password", "false");
-
-    setAuthState({
-      accessToken: data.access_token,
-      user: data.user,
-      mustChangePassword: false
-    });
-
-    redirectByRole(data.user.role);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  /* ----------------------------------------------------
-     FORCE PASSWORD CHANGE
-  ---------------------------------------------------- */
-const forceChangePassword = async (newPassword) => {
-  setLoading(true);
-  try {
-    const res = await api.put("/auth/force-change-password", {
-      new_password: newPassword
-    });
-
-    // 🔑 STORE REAL TOKENS
-    setAuth({
-      access_token: res.data.access_token,
-      refresh_token: res.data.refresh_token,
-      user: res.data.user
-    });
-
-    localStorage.removeItem("egym_temp_token");
-    localStorage.setItem("egym_must_change_password", "false");
-
-    setAuthState({
-      accessToken: res.data.access_token,
-      user: res.data.user,
-      mustChangePassword: false
-    });
-
-    redirectByRole(res.data.user.role);
-    return { success: true };
-  } catch (err) {
-    return {
-      success: false,
-      error: err.response?.data?.error || "Failed to change password"
-    };
-  } finally {
-    setLoading(false);
-  }
-};
-
-  /* ----------------------------------------------------
-     LOGOUT
-  ---------------------------------------------------- */
-  const logout = () => {
-    clearAuth();
-    localStorage.removeItem("egym_must_change_password"); // ✅ ADD THIS
-    setAuthState(null);
-    navigate("/login");
   };
 
+  /* ---------------- FORCE PASSWORD CHANGE ---------------- */
+  const forceChangePassword = async (newPassword) => {
+    setLoading(true);
+    try {
+      const res = await api.put("/auth/force-change-password", {
+        new_password: newPassword,
+      });
 
-  /* ----------------------------------------------------
-     HELPERS
-  ---------------------------------------------------- */
+      setAuth({
+        access_token: res.data.access_token,
+        refresh_token: res.data.refresh_token,
+        user: res.data.user,
+      });
+
+      localStorage.removeItem("egym_temp_token");
+      localStorage.setItem("egym_must_change_password", "false");
+
+      setAuthState({
+        accessToken: res.data.access_token,
+        user: res.data.user,
+        mustChangePassword: false,
+      });
+
+      redirectByRole(res.data.user.role);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.error || "Failed to change password" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ---------------- LOGOUT ---------------- */
+  // Already wrapped in useCallback above
+
+  /* ---------------- HELPERS ---------------- */
   const redirectByRole = (role = "client") => {
     if (role === "superadmin") navigate("/superadmin");
     else if (role === "gymadmin") navigate("/gymadmin");
@@ -166,16 +166,10 @@ const forceChangePassword = async (newPassword) => {
         changePassword: async (currentPassword, newPassword) => {
           setLoading(true);
           try {
-            await api.put("/auth/change-password", {
-              current_password: currentPassword,
-              new_password: newPassword
-            });
+            await api.put("/auth/change-password", { current_password: currentPassword, new_password: newPassword });
             return { success: true };
           } catch (err) {
-            return { 
-              success: false, 
-              error: err.response?.data?.error || "Failed to change password" 
-            };
+            return { success: false, error: err.response?.data?.error || "Failed to change password" };
           } finally {
             setLoading(false);
           }

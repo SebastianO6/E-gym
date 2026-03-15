@@ -1,0 +1,40 @@
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal{
+  background:white;
+  padding:24px;
+  border-radius:8px;
+  width:400px;
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:20px;
+}
+
+.cancel{
+  background:#ccc;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+}
+
+.delete{
+  background:#e53935;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+}

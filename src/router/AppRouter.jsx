@@ -50,6 +50,7 @@ import ClientSchedule from "../pages/client/clientSchedule";
 import Settings from "../pages/client/settings/Settings";
 import ClientMessages from "../pages/client/messages/ClientMessages";
 import ClientAnnouncements from "../pages/client/messages/announcements/ClientAnnouncements";
+import TrainerSettings from "../pages/trainer/settings/TrainerSettings";
 
 /* ============================ */
 
@@ -98,6 +99,7 @@ export default function AppRouter() {
         }
       >
         <Route path="*" element={<GymAdminRoutes />} />
+
       </Route>
 
 
@@ -118,6 +120,7 @@ export default function AppRouter() {
         <Route path="plans/create" element={<CreateTrainingPlan />} />
         <Route path="schedule" element={<TrainerSchedule />} />
         <Route path="/trainer/schedule/:id" element={<ScheduleDetail />} />
+        <Route path="/trainer/settings" element={<TrainerSettings />} />
 
 
         {/* Messaging */}

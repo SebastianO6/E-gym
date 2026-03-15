@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { getMySchedule } from "../../services/trainerServiceSchedule";
-import styles from "./clientSchedules.module.css";
-
+import styles from "./ClientSchedules.module.css"
 const ClientSchedule = () => {
   const [sessions, setSessions] = useState([]);
 

@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if ([401, 422].includes(err.response?.status)) {
+    if ([401, 403, 422].includes(err.response?.status)) {
       clearAuth();
       window.location.href = "/login";
     }

@@ -4,6 +4,7 @@ import { Dumbbell, MessageCircle, ClipboardList, Bell} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientSchedule from "./clientSchedule";
 import api from "../../api/axios";
+import { getAnnouncements } from "../../services/clientService";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -12,20 +13,20 @@ const ClientDashboard = () => {
   const [membership, setMembership] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
-      api.get("/client/announcements"),
-      api.get("/client/plans"),
-      api.get("/client/membership/me")
-    ])
+useEffect(() => {
+  Promise.all([
+    getAnnouncements(),
+    api.get("/client/plans"),
+    api.get("/client/membership/me")
+  ])
     .then(([annRes, planRes, memberRes]) => {
-      setAnnouncements(annRes.data || []);
+      setAnnouncements(annRes || []);
       setPlans(planRes.data || []);
       setMembership(memberRes.data || null);
     })
     .catch(() => {})
     .finally(() => setLoading(false));
-  }, []);
+}, []);
 
   if (loading) {
     return (

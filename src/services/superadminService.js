@@ -30,8 +30,11 @@ export const getPlatformRevenue = async () => {
 };
 
 
-export const deleteGym = (gymId) =>
-  api.delete(`/superadmin/gyms/${gymId}`);
+export const deactivateGym = (gymId) =>
+  api.patch(`/superadmin/gyms/${gymId}/deactivate`);
+
+export const activateGym = async (gymId) =>
+  api.patch(`/superadmin/gyms/${gymId}/activate`);
 
 export const getExpiringGyms = async () => {
   const res = await api.get("/superadmin/gyms/expiring");

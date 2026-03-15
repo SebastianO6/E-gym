@@ -7,7 +7,7 @@ export async function getMyPlan() {
 }
 
 export async function getAnnouncements() {
-  const res = await api.get("/announcements");
+  const res = await api.get("/client/announcements");
   return res.data;
 }
 

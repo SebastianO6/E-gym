@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import styles from "./AddMemberModal.module.css";
-import { X, Mail, User, Copy, Check, AlertCircle } from "lucide-react";
+import { X, Mail, User, Phone, AlertCircle } from "lucide-react";
 import { inviteMember } from "../../../services/gymAdminService";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -9,28 +9,18 @@ const AddMemberModal = ({ onClose, onCreated }) => {
 
   const [form, setForm] = useState({
     email: "",
+    full_name: "",
+    phone: "",
     plan: "monthly",
     start_date: new Date().toISOString().split("T")[0],
-    status: "active",
+    status: "active"
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [successData, setSuccessData] = useState(null);
-  const [copied, setCopied] = useState(false);
 
-  const update = useCallback((key, value) => {
+  const update = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-  }, []);
-
-  const copyToClipboard = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      alert("Failed to copy");
-    }
   };
 
   const save = async () => {
@@ -40,8 +30,9 @@ const AddMemberModal = ({ onClose, onCreated }) => {
     }
 
     const gymId = auth?.user?.gym_id || localStorage.getItem("gym_id");
+
     if (!gymId) {
-      setError("Unable to determine gym. Please re-login.");
+      setError("Gym not detected. Please login again.");
       return;
     }
 
@@ -49,98 +40,46 @@ const AddMemberModal = ({ onClose, onCreated }) => {
     setError("");
 
     try {
+      // split full name
+      const nameParts = form.full_name.trim().split(" ");
+      const first_name = nameParts[0];
+      const last_name = nameParts.slice(1).join(" ");
+
       const payload = {
         email: form.email.trim(),
+        first_name,
+        last_name,
+        phone: form.phone.trim(),
         gym_id: Number(gymId),
         plan: form.plan,
-        status: form.status,
-        start_date: form.start_date
+        start_date: form.start_date,
+        status: form.status
       };
 
-      const result = await inviteMember(payload.email);
+      await inviteMember(payload);
 
+      onCreated?.();
+      onClose();
 
-      if (result?.initial_password) {
-        setSuccessData({
-          email: result.member?.email ?? payload.email,
-          password: result.initial_password,
-          memberId: result.member?.id,
-          plan: result.member?.plan ?? payload.plan,
-        });
-      } else {
-        onCreated?.();
-        onClose();
-      }
     } catch (err) {
       const res = err.response;
+
       if (res?.data?.error) setError(res.data.error);
-      else if (res?.status === 409) setError("Email already exists");
-      else if (res?.status === 403) setError("Permission denied");
-      else if (err.message === "Network Error") setError("Network error");
+      else if (res?.status === 409) setError("Member already exists");
       else setError("Failed to create member");
     } finally {
       setLoading(false);
     }
   };
 
-  if (successData) {
-    return (
-      <div className={styles.overlay}>
-        <div className={styles.modal}>
-          <div className={styles.header}>
-            <h2>✅ Member Created</h2>
-            <button onClick={onClose}><X size={18} /></button>
-          </div>
-
-          <div className={styles.successBody}>
-            <div className={styles.credentialsBox}>
-              <div className={styles.credentialItem}>
-                <label>Email</label>
-                <div>
-                  {successData.email}
-                  <button onClick={() => copyToClipboard(successData.email)}>
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.credentialItem}>
-                <label>Temporary Password</label>
-                <div>
-                  <code>{successData.password}</code>
-                  <button onClick={() => copyToClipboard(successData.password)}>
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.warningBox}>
-                <AlertCircle size={18} />
-                <p>
-                  Client must change password on first login.<br />
-                  Login URL: {window.location.origin}/login
-                </p>
-              </div>
-            </div>
-
-            <button className={styles.doneBtn} onClick={() => {
-              onCreated?.();
-              onClose();
-            }}>
-              Done
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
           <h2>Add Member</h2>
-          <button onClick={onClose}><X size={18} /></button>
+          <button onClick={onClose}>
+            <X size={18} />
+          </button>
         </div>
 
         <div className={styles.body}>
@@ -151,7 +90,7 @@ const AddMemberModal = ({ onClose, onCreated }) => {
           )}
 
           <label>
-            <Mail size={16} /> Email *
+            <Mail size={16}/> Email *
             <input
               type="email"
               value={form.email}
@@ -160,16 +99,29 @@ const AddMemberModal = ({ onClose, onCreated }) => {
           </label>
 
           <label>
-            <User size={16} /> Full Name
+            <User size={16}/> Full Name *
             <input
               value={form.full_name}
               onChange={(e) => update("full_name", e.target.value)}
+              placeholder="John Doe"
+            />
+          </label>
+
+          <label>
+            <Phone size={16}/> Phone *
+            <input
+              value={form.phone}
+              onChange={(e) => update("phone", e.target.value)}
+              placeholder="0712345678"
             />
           </label>
 
           <label>
             Plan
-            <select value={form.plan} onChange={(e) => update("plan", e.target.value)}>
+            <select
+              value={form.plan}
+              onChange={(e) => update("plan", e.target.value)}
+            >
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
             </select>
@@ -186,7 +138,10 @@ const AddMemberModal = ({ onClose, onCreated }) => {
 
           <label>
             Status
-            <select value={form.status} onChange={(e) => update("status", e.target.value)}>
+            <select
+              value={form.status}
+              onChange={(e) => update("status", e.target.value)}
+            >
               <option value="active">Active</option>
               <option value="pending">Pending</option>
               <option value="suspended">Suspended</option>
@@ -196,6 +151,7 @@ const AddMemberModal = ({ onClose, onCreated }) => {
 
         <div className={styles.footer}>
           <button onClick={onClose}>Cancel</button>
+
           <button onClick={save} disabled={loading}>
             {loading ? "Creating..." : "Create"}
           </button>

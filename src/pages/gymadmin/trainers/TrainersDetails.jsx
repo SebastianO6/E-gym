@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getTrainer, deleteTrainer } from "../../../services/gymAdminService";
+import { getTrainer, deactivateTrainer } from "../../../services/gymAdminService";
 import TrainerCalendar from "./TrainersCalendar";
 import styles from "./TrainersDetails.module.css";
 
@@ -39,13 +39,13 @@ export default function TrainerDetails() {
         <button
           className={styles.deleteBtn}
           onClick={async () => {
-            if (window.confirm("Delete trainer?")) {
-              await deleteTrainer(trainer.id);
+            if (window.confirm("Deactivate trainer?")) {
+              await deactivateTrainer(trainer.id);
               window.history.back();
             }
           }}
         >
-          Delete Trainer
+          Deactivate Trainer
         </button>
       </div>
 

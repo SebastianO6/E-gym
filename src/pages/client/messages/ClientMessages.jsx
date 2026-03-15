@@ -11,7 +11,6 @@ export default function ClientMessages() {
   const [trainerId, setTrainerId] = useState(null);
   const [trainerName, setTrainerName] = useState("");
   const [trainerEmail, setTrainerEmail] = useState("");
-  const [myId, setMyId] = useState(null);
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -27,19 +26,20 @@ export default function ClientMessages() {
 
         const decoded = JSON.parse(atob(token.split(".")[1]));
         const userId = parseInt(decoded.sub);
-        setMyId(userId);
 
         // Get assigned trainer
-        const res = await api.get("/client/plans");
-        if (!res.data.length) return;
+        const res = await api.get("/client/trainer");
 
-        const plan = res.data[0];
-        setTrainerId(plan.trainer_id);
-        setTrainerName(plan.trainer_name);
-        setTrainerEmail(plan.trainer_email);
+        if (!res.data.trainer_id) return;
+
+        setTrainerId(res.data.trainer_id);
+        setTrainerName(res.data.trainer_name);
+        setTrainerEmail(res.data.trainer_email);
 
         // Load conversation
-        const convo = await api.get(`/messages/conversation/${plan.trainer_id}`);
+        const convo = await api.get(
+          `/messages/conversation/${res.data.trainer_id}`
+        );
 
         const formatted = (convo.data.items || []).map((m) => ({
           ...m,
@@ -54,16 +54,18 @@ export default function ClientMessages() {
 
         socketRef.current = socket;
 
-        // Join room
-        socket.emit("join_room", { receiver_id: plan.trainer_id });
+        socket.emit("join_room", {
+          receiver_id: res.data.trainer_id,
+        });
 
         socket.on("new_message", (msg) => {
           if (
-            msg.sender_id === plan.trainer_id ||
-            msg.receiver_id === plan.trainer_id
+            msg.sender_id === res.data.trainer_id ||
+            msg.receiver_id === res.data.trainer_id
           ) {
             setMessages((prev) => {
               if (prev.some((m) => m.id === msg.id)) return prev;
+
               return [
                 ...prev,
                 {
@@ -74,7 +76,6 @@ export default function ClientMessages() {
             });
           }
         });
-
       } catch (err) {
         console.log("Client chat init failed:", err);
       }

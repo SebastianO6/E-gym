@@ -19,8 +19,13 @@ export const updateTrainer = async (id, data) => {
   return res.data;
 };
 
-export const deleteTrainer = async (id) => {
-  const res = await api.delete(`/gymadmin/trainers/${id}`);
+export const deactivateTrainer = async (id) => {
+  const res = await api.patch(`/gymadmin/trainers/${id}/deactivate`);
+  return res.data;
+};
+
+export const activateTrainer = async (id) => {
+  const res = await api.patch(`/gymadmin/trainers/${id}/activate`);
   return res.data;
 };
 
@@ -42,8 +47,8 @@ export const resendInvite = async (inviteId) => {
 /* =========================
    MEMBERS
 ========================= */
-export const listMembers = async (params = {}) => {
-  const res = await api.get("/gymadmin/members", { params });
+export const listMembers = async () => {
+  const res = await api.get("/gymadmin/members");
   return res.data.items;
 };
 
@@ -57,13 +62,33 @@ export const updateMember = async (id, data) => {
   return res.data;
 };
 
-export const inviteMember = async (email) => {
-  const res = await api.post("/gymadmin/members/invite", { email });
+export const inviteMember = async (payload) => {
+  const res = await api.post("/gymadmin/members/invite", payload);
+  return res.data;
+};
+
+export const deactivateMember = async (id) => {
+  const res = await api.patch(`/gymadmin/members/${id}/deactivate`);
+  return res.data;
+};
+
+export const activateMember = async (id) => {
+  const res = await api.patch(`/gymadmin/members/${id}/activate`);
   return res.data;
 };
 
 export const deleteMember = async (id) => {
   const res = await api.delete(`/gymadmin/members/${id}`);
+  return res.data;
+};
+
+export const getExpiredMembers = async () => {
+  const res = await api.get("/gymadmin/members/expired");
+  return res.data.items;
+};
+
+export const deleteTrainer = async (id) => {
+  const res = await api.delete(`/gymadmin/trainers/${id}`);
   return res.data;
 };
 

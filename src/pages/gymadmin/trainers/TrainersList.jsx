@@ -3,9 +3,10 @@ import {
   listTrainers,
   inviteTrainer,
   updateTrainer,
-  deleteTrainer,
   resendInvite,
+  deleteTrainer
 } from "../../../services/gymAdminService";
+
 import TrainerForm from "./TrainerForm";
 import styles from "./TrainersList.module.css";
 import { useNavigate } from "react-router-dom";
@@ -33,17 +34,19 @@ export default function TrainersList() {
   };
 
   const remove = async (id) => {
-    if (!window.confirm("Soft delete trainer?")) return;
+    if (!window.confirm("Delete trainer permanently?")) return;
+
     await deleteTrainer(id);
     load();
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Trainers</h1>
+
         <button
           className={styles.inviteBtn}
           onClick={() => {
@@ -60,7 +63,6 @@ export default function TrainersList() {
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Status</th>
             <th className={styles.actionsCol}>Actions</th>
           </tr>
         </thead>
@@ -68,10 +70,6 @@ export default function TrainersList() {
         <tbody>
           {trainers.map((t) => {
             const fullName = `${t.first_name || ""} ${t.last_name || ""}`.trim();
-
-            let status = "Active";
-            if (t.deleted_at) status = "Deleted";
-            else if (t.invite_status === "pending") status = "Pending";
 
             return (
               <tr key={t.id}>
@@ -83,20 +81,6 @@ export default function TrainersList() {
                 </td>
 
                 <td>{t.email}</td>
-
-                <td>
-                  <span
-                    className={`${styles.badge} ${
-                      status === "Active"
-                        ? styles.active
-                        : status === "Pending"
-                        ? styles.pending
-                        : styles.deleted
-                    }`}
-                  >
-                    {status}
-                  </span>
-                </td>
 
                 <td className={styles.actions}>
                   {t.invite_status === "pending" && !t.deleted_at && (
@@ -149,4 +133,4 @@ export default function TrainersList() {
       )}
     </div>
   );
-}
+} 

@@ -8,6 +8,9 @@ import {
 } from "../../../services/gymAdminService";
 import styles from "./MemberDetails.module.css";
 import RenewModal from "./RenewModal";
+import { deleteMember } from "../../../services/gymAdminService";
+import { useNavigate } from "react-router-dom";
+import ConfirmDeleteModal from "../../../components/confirmDeleteModal";
 
 export default function MemberDetails() {
   const { memberId } = useParams();
@@ -18,8 +21,10 @@ export default function MemberDetails() {
   const [payments, setPayments] = useState([]);
   const [showRenew, setShowRenew] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [showDelete, setShowDelete] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async () => {  
     try {
       setLoading(true);
 
@@ -50,6 +55,19 @@ export default function MemberDetails() {
     load();
   }, [load]);
 
+  const handleDelete = async () => {
+    try {
+      await deleteMember(member.id);
+
+      alert("Member deleted successfully");
+
+      navigate("/gymadmin/members");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete member");
+    }
+  };
+
   const assignTrainer = async () => {
     if (!trainerId || isNaN(trainerId)) {
       alert("Please select a trainer");
@@ -76,6 +94,13 @@ export default function MemberDetails() {
   return (
     <div className={styles.container}>
       <h2 className={styles.pageTitle}>Member Profile</h2>
+
+      <button
+        className={styles.deleteBtn}
+        onClick={() => setShowDelete(true)}
+      >
+        Permanently Delete Member
+      </button>
 
       {/* MEMBER INFO */}
       <div className={styles.infoGrid}>
@@ -184,6 +209,15 @@ export default function MemberDetails() {
           memberId={member.id}
           onClose={() => setShowRenew(false)}
           onSuccess={load}
+        />
+      )}
+
+      {showDelete && (
+        <ConfirmDeleteModal
+          title="Delete Member"
+          message="This action is permanent. The member, subscriptions and payments will be permanently removed."
+          onCancel={() => setShowDelete(false)}
+          onConfirm={handleDelete}
         />
       )}
     </div>

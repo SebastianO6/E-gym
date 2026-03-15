@@ -1,42 +1,75 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, Trash2, Eye } from "lucide-react";
+import { Search, Plus, Trash2, Eye, Pencil } from "lucide-react";
 import AddGymModal from "./AddGymModal/AddGymModal";
+import EditGymModal from "./EditGymModal";
 import ConfirmationModal from "./common/ConfirmationModal";
 import styles from "./AllGyms.module.css";
-import { getAllGyms } from "../../services/superadminService";
 import api from "../../api/axios";
-import EditGymModal from "./EditGymModal"
-import { Pencil } from "lucide-react"
+
 const AllGyms = () => {
   const navigate = useNavigate();
+
   const [gyms, setGyms] = useState([]);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [editingGym, setEditingGym] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
-  const [editingGym, setEditingGym] = useState(null)
+
+  // Load gyms from backend
+  const loadGyms = async () => {
+    try {
+      const res = await api.get("/superadmin/gyms");
+      setGyms(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Failed to load gyms", err);
+    }
+  };
 
   useEffect(() => {
     loadGyms();
   }, []);
 
-  const loadGyms = async () => {
-    const data = await getAllGyms();
-    setGyms(Array.isArray(data) ? data : []);
-  };
-
+  // Handle creation
   const handleGymCreated = (gym) => {
     setGyms((prev) => [...prev, gym]);
     setShowModal(false);
   };
 
+  // Delete gym
   const confirmDeleteGym = async () => {
-    await api.delete(`/superadmin/gyms/${confirmDelete}`);
-    setGyms((prev) => prev.filter((g) => g?.id !== confirmDelete));
-    setConfirmDelete(null);
+    try {
+      await api.delete(`/superadmin/gyms/${confirmDelete}`);
+      setGyms((prev) => prev.filter((g) => g.id !== confirmDelete));
+      setConfirmDelete(null);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  // ✅ SAFE FILTER (FIXES CRASH)
+  // Activate / Deactivate gym
+  const toggleGymStatus = async (gym) => {
+    try {
+      // Determine endpoint based on current status
+      const endpoint = gym.status === "active" ? "deactivate" : "activate";
+
+      // Call backend
+       await api.patch(`/superadmin/gyms/${gym.id}/${endpoint}`);
+
+      // Update the local state with latest status from backend
+      setGyms((prev) =>
+        prev.map((g) =>
+          g.id === gym.id
+            ? { ...g, status: endpoint === "deactivate" ? "inactive" : "active" }
+            : g
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Filter gyms safely
   const filteredGyms = useMemo(() => {
     const safeGyms = Array.isArray(gyms) ? gyms : [];
     return safeGyms.filter(
@@ -70,7 +103,10 @@ const AllGyms = () => {
           <tr>
             <th>Gym</th>
             <th>Owner Email</th>
+            <th>Owner Phone</th>
+            <th>Members</th>
             <th>Status</th>
+            <th>Subscription</th> 
             <th />
           </tr>
         </thead>
@@ -79,11 +115,34 @@ const AllGyms = () => {
             <tr key={g.id}>
               <td>{g.name}</td>
               <td>{g.owner_email || "-"}</td>
-              <td>{g.status || "active"}</td>
+              <td>{g.phone || "-"}</td>
+              <td>{g.members || 0}</td>
+              <td>
+                <span className={g.status === "active" ? styles.active : styles.inactive}>
+                  {g.status}
+                </span>
+              </td>
+              <td>
+                <span className={g.subscription_status === "active" ? styles.active : styles.inactive}>
+                  {g.subscription_status}
+                </span>
+              </td>
               <td className={styles.actions}>
                 <Eye onClick={() => navigate(`/superadmin/gyms/${g.id}`)} />
                 <Pencil onClick={() => setEditingGym(g)} />
                 <Trash2 onClick={() => setConfirmDelete(g.id)} />
+                <button
+                  onClick={() => toggleGymStatus(g)}
+                  style={{
+                    cursor: "pointer",
+                    marginLeft: 8,
+                    background: "none",
+                    border: "none",
+                    color: g.status === "active" ? "red" : "green",
+                  }}
+                >
+                  {g.status === "active" ? "Deactivate" : "Activate"}
+                </button>
               </td>
             </tr>
           ))}
@@ -94,13 +153,12 @@ const AllGyms = () => {
         <EditGymModal
           gym={editingGym}
           onClose={() => setEditingGym(null)}
-          onSave={(updateGym) => {
-            setGyms((prev) => 
-              prev.map((g) => (g.id === updateGym.id ? updateGym : g))
-            );
+          onSave={async (updatedGym) => {
+            await api.put(`/superadmin/gyms/${updatedGym.id}`, updatedGym);
+            await loadGyms();
             setEditingGym(null);
           }}
-          />
+        />
       )}
 
       {showModal && (

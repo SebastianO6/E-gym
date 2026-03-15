@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import api from "../../api/axios";
 import styles from "./EditGymModal.module.css";
 
-const EditGymModal = ({ onClose, gym, onSave }) => {
+const EditGymModal = ({ gym, onClose, onSave }) => {
   const [form, setForm] = useState({
     name: "",
-    ownerName: "",
-    ownerEmail: "",
     phone: "",
     address: "",
     status: "active",
@@ -16,123 +14,57 @@ const EditGymModal = ({ onClose, gym, onSave }) => {
     if (gym) {
       setForm({
         name: gym.name || "",
-        ownerName: "",
-        ownerEmail: gym.owner_email || "",
         phone: gym.phone || "",
         address: gym.address || "",
-        status: "active",
+        status: gym.status || "active"
       });
     }
   }, [gym]);
 
-
-  const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
-
-  const saveChanges = () => {
-    if (!form.name.trim()) return alert("Gym name required");
-    if (!form.ownerName.trim()) return alert("Owner name required");
-    if (!form.ownerEmail.includes("@")) return alert("Valid owner email required");
-
-    const updated = {
-      ...gym,
-      name: form.name,
-      owner: { ...gym.owner, name: form.ownerName, email: form.ownerEmail, phone: form.phone },
-      address: form.address,
-      status: form.status,
-    };
-
-    onSave(updated);
-    onClose();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (!gym) return null;
+  const handleSubmit = async () => {
+    // check if anything changed
+    const hasChanges = Object.keys(form).some((key) => form[key] !== gym[key]);
+    if (!hasChanges) {
+      onClose();
+      return;
+    }
+
+    await api.put(`/superadmin/gyms/${gym.id}`, form);
+    onSave({ ...gym, ...form });
+  };
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        {/* Header */}
-        <div className={styles.header}>
-          <h2 className={styles.title}>Edit Gym</h2>
-          <button onClick={onClose} className={styles.closeBtn}>
-            <X size={20} />
-          </button>
-        </div>
+        <h2>Edit Gym</h2>
 
-        {/* Body */}
-        <div className={styles.body}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Gym Name</label>
-            <input 
-              value={form.name} 
-              onChange={(e) => update("name", e.target.value)}
-              className={styles.input}
-            />
-          </div>
+        <label>Name</label>
+        <input name="name" value={form.name} onChange={handleChange} />
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Status</label>
-            <select 
-              value={form.status} 
-              onChange={(e) => update("status", e.target.value)}
-              className={styles.select}
-            >
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="suspended">Suspended</option>
-            </select>
-          </div>
+        <label>Phone</label>
+        <input name="phone" value={form.phone} onChange={handleChange} />
 
-          <div className={styles.row}>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Owner Name</label>
-                <input 
-                  value={form.ownerName} 
-                  onChange={(e) => update("ownerName", e.target.value)} 
-                  className={styles.input}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Phone</label>
-                <input 
-                  value={form.phone} 
-                  onChange={(e) => update("phone", e.target.value)} 
-                  className={styles.input}
-                />
-            </div>
-          </div>
+        <label>Address</label>
+        <input name="address" value={form.address} onChange={handleChange} />
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Owner Email</label>
-            <input 
-              value={form.ownerEmail} 
-              onChange={(e) => update("ownerEmail", e.target.value)} 
-              className={styles.input}
-            />
-          </div>
+        <label>Status</label>
+        <select name="status" value={form.status} onChange={handleChange}>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Address</label>
-            <textarea 
-              value={form.address} 
-              onChange={(e) => update("address", e.target.value)} 
-              className={styles.textarea}
-              rows="3"
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className={styles.footer}>
-          <button className={styles.cancelBtn} onClick={onClose}>
-            Cancel
-          </button>
-          <button className={styles.saveBtn} onClick={saveChanges}>
-            Save Changes
-          </button>
+        <div className={styles.actions}>
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={handleSubmit}>Save</button>
         </div>
       </div>
     </div>
   );
 };
 
-export default EditGymModal;
+export default EditGymModal;  

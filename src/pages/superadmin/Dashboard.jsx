@@ -2,71 +2,50 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Building, Users } from "lucide-react";
 import styles from "./Dashboard.module.css";
-import { getAllGyms, getAllUsers } from "../../services/superadminService";
 import PlatformRevenue from "./PlatformRevenue";
-import { getExpiringGyms } from "../../services/superadminService";
+import api from "../../api/axios";
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
+
   const [gyms, setGyms] = useState([]);
   const [users, setUsers] = useState([]);
-  const [expiringGyms, setExpiringGyms] = useState([])
-
-  useEffect(() => {
-    load();
-  }, []);
-
+  const [expiringGyms, setExpiringGyms] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+  const loadData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const [gymsData, usersData, expiring] = await Promise.all([
-        getAllGyms(),
-        getAllUsers(),
-        getExpiringGyms(),
+      const [gymsRes, usersRes, expiringRes] = await Promise.all([
+        api.get("/superadmin/gyms"),
+        api.get("/superadmin/users"),
+        api.get("/superadmin/gyms/expiring"),
       ]);
 
-      setGyms(gymsData || []);
-      setUsers(usersData || []);
-      setExpiringGyms(expiring || []);
-
+      setGyms(gymsRes.data || []);
+      setUsers(usersRes.data || []);
+      setExpiringGyms(expiringRes.data || []);
     } catch (err) {
-      console.error("Dashboard load error:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const stats = [
-    {
-      label: "Total Gyms",
-      value: gyms.length,
-      icon: Building,
-    },
-    {
-      label: "Total Users",
-      value: users.length,
-      icon: Users,
-    },
-    {
-      label: "Gym Admins",
-      value: users.filter((u) => u.role === "gymadmin").length,
-      icon: Users,
-    },
-    {
-      label: "Trainers",
-      value: users.filter((u) => u.role === "trainer").length,
-      icon: Users,
-    },
-    {
-      label: "Clients",
-      value: users.filter((u) => u.role === "client").length,
-      icon: Users,
-    },
-  ];
+  useEffect(() => {
+    loadData();
+  }, []);
 
+  // Compute stats dynamically
+  const activeGyms = gyms.filter((g) => g.status === "active");
+  const inactiveGyms = gyms.filter((g) => g.status !== "active");
+
+  const stats = [
+    { label: "Total Gyms", value: gyms.length, icon: Building },
+    { label: "Active Gyms", value: activeGyms.length, icon: Building },
+    { label: "Inactive Gyms", value: inactiveGyms.length, icon: Building },
+    { label: "Total Users", value: users.length, icon: Users },
+  ];
 
   if (loading) {
     return <div className={styles.container}>Loading dashboard...</div>;
@@ -88,15 +67,12 @@ const SuperAdminDashboard = () => {
         ))}
       </div>
 
-      <PlatformRevenue />
+      <PlatformRevenue gyms={activeGyms} />
 
       <div className={styles.sectionCard}>
-        <div className={styles.cardHeader}>
-          <h3 className={styles.cardTitle}>⚠️ Gyms Expiring Soon</h3>
-        </div>
-
+        <h3>⚠️ Gyms Expiring Soon</h3>
         {expiringGyms.length === 0 ? (
-          <p>No gyms expiring in the next 3 days.</p>
+          <p>No gyms expiring soon.</p>
         ) : (
           <table className={styles.table}>
             <thead>
@@ -107,7 +83,6 @@ const SuperAdminDashboard = () => {
                 <th />
               </tr>
             </thead>
-
             <tbody>
               {expiringGyms.map((g) => (
                 <tr key={g.gym_id}>
@@ -115,11 +90,7 @@ const SuperAdminDashboard = () => {
                   <td>{g.plan}</td>
                   <td>{g.days_left}</td>
                   <td>
-                    <button
-                      onClick={() =>
-                        navigate(`/superadmin/gyms/${g.gym_id}`)
-                      }
-                    >
+                    <button onClick={() => navigate(`/superadmin/gyms/${g.gym_id}`)}>
                       Manage
                     </button>
                   </td>
@@ -129,53 +100,6 @@ const SuperAdminDashboard = () => {
           </table>
         )}
       </div>
-
-      <div className={styles.sectionCard}>
-        <div className={styles.cardHeader}>
-          <h3 className={styles.cardTitle}>Recent Gyms</h3>
-          <button
-            className={styles.viewAllBtn}
-            onClick={() => navigate("/superadmin/gyms")}
-          >
-            View All
-          </button>
-        </div>
-
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gyms.slice(0, 5).map((gym) => (
-                <tr key={gym.id}>
-                  <td>{gym.name}</td>
-                  <td>{gym.email}</td>
-                  <td>
-                    <span
-                      className={`${styles.badge} ${
-                        gym.status === "active"
-                          ? styles.badgeActive
-                          : styles.badgePending
-                      }`}
-                    >
-                      {gym.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <button onClick={() => navigate("/superadmin/gyms")}>
-        Manage Gyms →
-      </button>
     </div>
   );
 };

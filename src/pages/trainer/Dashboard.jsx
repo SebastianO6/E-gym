@@ -8,7 +8,6 @@ import {
   MessageSquare,
   Clock,
   Plus,
-  ChevronRight,
 } from "lucide-react";
 import api from "../../api/axios";
 
@@ -165,29 +164,37 @@ const TrainerDashboard = () => {
         {todaySessions.length === 0 ? (
           <p className={styles.muted}>No sessions today</p>
         ) : (
-          todaySessions.map((s) => (
+          todaySessions.slice(0, 2).map((s) => (
             <div key={s.id} className={styles.sessionItem}>
               <div>
                 <h4>{s.member_name}</h4>
-                  <p>
-                    {new Date(s.start_time).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                  </p>
+
+                <p className={styles.sessionMeta}>
+                  {s.plan_title}
+                </p>
+
+                <p className={styles.sessionDate}>
+                  {new Date(s.start_time).toLocaleDateString()}
+                </p>
               </div>
 
               <button
                 className={styles.startBtn}
-                onClick={() =>
-                  navigate(`/trainer/members/${s.member_name}`)
-                }
+                onClick={() => navigate("/trainer/schedule")}
               >
-                View
-                <ChevronRight size={14} />
+                Open
               </button>
             </div>
           ))
+        )}
+
+        {todaySessions.length > 2 && (
+          <button
+            className={styles.viewAllBtn}
+            onClick={() => navigate("/trainer/schedule")}
+          >
+            View Full Schedule →
+          </button>
         )}
       </div>
     </div>

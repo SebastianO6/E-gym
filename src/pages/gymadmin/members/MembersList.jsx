@@ -1,24 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
-import styles from "./MembersList.module.css";
-import AddMemberModal from "./AddMemberModal";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus } from "lucide-react";
-import { listMembers, deleteMember } from "../../../services/gymAdminService";
+import { listMembers, deactivateMember, activateMember } from "../../../services/gymAdminService";
+import AddMemberModal from "./AddMemberModal";
 import EditMemberModal from "./EditMemberModal";
+import { Search, Plus } from "lucide-react";
+import styles from "./MembersList.module.css";
 
-const MembersList = () => {
+export default function MembersList() {
   const navigate = useNavigate();
   const [members, setMembers] = useState([]);
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
-  const [editingMember, setEditingMember] = useState(null) 
+  const [editingMember, setEditingMember] = useState(null);
 
   const loadMembers = async () => {
     try {
       const data = await listMembers();
       setMembers(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Load members failed:", err);
+      console.error(err);
       setMembers([]);
     }
   };
@@ -32,6 +32,28 @@ const MembersList = () => {
       (m?.email || "").toLowerCase().includes(search.toLowerCase())
     );
   }, [members, search]);
+
+  const handleDeactivate = async (memberId) => {
+    if (!window.confirm("Deactivate this member?")) return;
+    try {
+      await deactivateMember(memberId);
+      await loadMembers();
+      navigate("/gymadmin/members/expired");
+    } catch (err) {
+      console.warn(err);
+      alert("Failed to deactivate member");
+    }
+  };
+
+  const handleActivate = async (memberId) => {
+    try {
+      await activateMember(memberId);
+      await loadMembers();
+    } catch (err) {
+      console.warn(err);
+      alert("Failed to activate member");
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -57,7 +79,7 @@ const MembersList = () => {
             <th>Email</th>
             <th>Plan</th>
             <th>Status</th>
-            <th />
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -67,48 +89,21 @@ const MembersList = () => {
               <td>{m.plan}</td>
               <td>{m.status}</td>
               <td>
-                <button onClick={() => navigate(`/gymadmin/members/${m.id}`)}>
-                  View
-                </button>
-                <button onClick={() => setEditingMember(m)}>
-                  Edit
-                </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      await deleteMember(m.id);
-                      loadMembers();
-                    } catch (err) {
-                      // silently ignore since delete worked
-                      console.warn("Delete warning:", err);
-                    }
-                  }}
-                >
-                  Delete
-                </button>
-
-
+                <button onClick={() => navigate(`/gymadmin/members/${m.id}`)}>View</button>
+                <button onClick={() => setEditingMember(m)}>Edit</button>
+                {m.status === "active" ? (
+                  <button onClick={() => handleDeactivate(m.id)}>Deactivate</button>
+                ) : (
+                  <button onClick={() => handleActivate(m.id)}>Activate</button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {showAdd && (
-        <AddMemberModal
-          onClose={() => setShowAdd(false)}
-          onCreated={loadMembers}
-        />
-      )}
-
-      {editingMember && (
-        <EditMemberModal
-          member={editingMember}
-          onClose={() => setEditingMember(null)}
-        />  
-      )}
+      {showAdd && <AddMemberModal onClose={() => setShowAdd(false)} onCreated={loadMembers} />}
+      {editingMember && <EditMemberModal member={editingMember} onClose={() => setEditingMember(null)} />}
     </div>
   );
-};
-
-export default MembersList;
+}

@@ -1,6 +1,4 @@
-/* Dashboard.module.css */
-
-/* ---- CONTAINER ---- */
+/* General Dashboard Styles */
 .dashboard {
   padding: 32px;
   background: #f4f6f9;
@@ -9,15 +7,16 @@
   color: #111827;
 }
 
-/* ---- MAIN TITLE ---- */
 .title {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 32px;
-  color: #111827;
+  background: linear-gradient(90deg,#2563eb,#4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* ---- STAT CARDS ---- */
+/* Stat Cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -33,6 +32,8 @@
   box-shadow: 0 2px 12px rgba(0,0,0,0.05);
   cursor: default;
   transition: all 0.3s ease;
+  text-align: center;
+  text-decoration: none;
 }
 
 .statCard:hover {
@@ -44,18 +45,20 @@
   font-size: 34px;
   margin: 0;
   font-weight: 700;
-  color: #111827;
 }
 
 .statCard p {
   margin-top: 8px;
   font-size: 13px;
-  letter-spacing: 1px;
   color: #6b7280;
   text-transform: uppercase;
 }
 
-/* ---- SECTIONS ---- */
+.statCard.highlight {
+  border-left: 6px solid #d9534f;
+}
+
+/* Sections */
 .section {
   background: #ffffff;
   padding: 28px;
@@ -65,14 +68,7 @@
   margin-top: 40px;
 }
 
-.section h2 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #111827;
-}
-
-/* ---- TABLES ---- */
+/* Tables */
 .tableContainer {
   overflow-x: auto;
 }
@@ -80,9 +76,6 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .table th {
@@ -99,7 +92,6 @@
   padding: 14px;
   border-bottom: 1px solid #f3f4f6;
   font-size: 14px;
-  color: #374151;
 }
 
 .table tr:hover {
@@ -111,7 +103,7 @@
   font-weight: 700;
 }
 
-/* ---- ANNOUNCEMENTS GRID ---- */
+/* Announcements */
 .announcementGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -122,8 +114,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-left: 4px solid #2563eb;
   transition: all 0.25s ease;
 }
 
@@ -132,200 +123,9 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.06);
 }
 
-.announcementHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.announcementCard h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.announcementCard p {
-  font-size: 14px;
-  color: #4b5563;
-  margin: 8px 0;
-}
-
-.announcementCard small {
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-/* ---- TAGS ---- */
-.tag {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 20px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.general { background: #e5e7eb; color: #374151; }
-.alert   { background: #fee2e2; color: #b91c1c; }
-.event   { background: #dbeafe; color: #1e40af; }
-.update  { background: #ecfdf5; color: #065f46; }
-
-.statCard {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
-.title {
-  background: linear-gradient(90deg,#2563eb,#4f46e5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.announcementCard {
-  border-left: 4px solid #2563eb;
-}
-
-.section {
-  transition: box-shadow 0.2s ease;
-}
-
-.section:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
-
-/* ---- LOADING / EMPTY STATES ---- */
 .loading, .emptyState {
   text-align: center;
   padding: 60px 20px;
   font-weight: 600;
   color: #6b7280;
-}
-
-/* ---- RESPONSIVE ---- */
-@media (max-width: 768px) {
-  .cards {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .announcementGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .statCard h2 {
-    font-size: 24px;
-  }
-
-  .statCard p {
-    font-size: 12px;
-  }
-
-  .table th,
-  .table td {
-    font-size: 12px;
-    padding: 10px;
-  }
-
-  .section {
-    padding: 20px;
-  }
-}
-
-/* -------------------------------
-TABLET RESPONSIVENESS
---------------------------------*/
-@media (max-width: 1024px) {
-
-  .dashboard {
-    padding: 24px;
-  }
-
-  .title {
-    font-size: 26px;
-  }
-
-  .cards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-
-  .section {
-    padding: 22px;
-  }
-
-  .announcementGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-}
-
-/* -------------------------------
-MOBILE RESPONSIVENESS
---------------------------------*/
-@media (max-width: 768px) {
-
-  .dashboard {
-    padding: 18px;
-  }
-
-  .title {
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-  }
-
-  .statCard {
-    padding: 20px;
-  }
-
-  .statCard h2 {
-    font-size: 28px;
-  }
-
-  .section {
-    padding: 18px;
-    margin-top: 24px;
-  }
-
-  .announcementGrid {
-    grid-template-columns: 1fr;
-  }
-
-}
-
-/* -------------------------------
-SMALL MOBILE
---------------------------------*/
-@media (max-width: 480px) {
-
-  .dashboard {
-    padding: 14px;
-  }
-
-  .title {
-    font-size: 20px;
-  }
-
-  .statCard h2 {
-    font-size: 24px;
-  }
-
-  .statCard p {
-    font-size: 11px;
-  }
-
-  .table th,
-  .table td {
-    padding: 10px;
-    font-size: 12px;
-  }
-
 }

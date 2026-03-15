@@ -1,10 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import {
-  getDashboardSummary,
-  getRevenueSummary,
-  listMembers,
-  getMember,
-} from "../../services/gymAdminService";
+import { getDashboardSummary, getRevenueSummary, listMembers } from "../../services/gymAdminService";
 import api from "../../api/axios";
 import styles from "./Dashboard.module.css";
 
@@ -15,95 +10,111 @@ export default function Dashboard() {
   const [revenue, setRevenue] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
   const [expiringMembers, setExpiringMembers] = useState([]);
+  const [activeMembers, setActiveMembers] = useState(0);
+  const [inactiveMembers, setInactiveMembers] = useState(0);
+  const [expiredCount, setExpiredCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const loadExpiringMembers = useCallback(async (members) => {
-    const today = new Date();
-    const soon = [];
+  // Load members and compute statuses
+  const loadMembers = useCallback(async () => {
+    try {
+      const members = await listMembers();
+      const today = new Date();
 
-    for (const m of members) {
-      try {
-        const full = await getMember(m.id);
-        const sub = full.subscription;
+      const active = members.filter(m => m.status === "active");
+      const inactive = members.filter(m => m.status !== "active");
 
-        if (!sub?.end_date) continue;
+      setActiveMembers(active.length);
+      setInactiveMembers(inactive.length);
 
-        const end = new Date(sub.end_date);
-        const daysLeft = Math.ceil(
-          (end - today) / (1000 * 60 * 60 * 24)
-        );
+      // Expiring soon
+      const soon = active
+        .filter(m => m.subscription?.end_date)
+        .map(m => ({
+          ...m,
+          daysLeft: Math.ceil(
+            (new Date(m.subscription.end_date) - today) / (1000 * 60 * 60 * 24)
+          )
+        }))
+        .filter(m => m.daysLeft <= DAYS_WARNING && m.daysLeft >= 0);
 
-        if (daysLeft <= DAYS_WARNING && daysLeft >= 0) {
-          soon.push({
-            id: m.id,
-            email: m.email,
-            plan: sub.plan,
-            daysLeft,
-          });
-        }
-      } catch {
-        // silently ignore individual member errors
-      }
+      setExpiringMembers(soon);
+
+      // Expired members
+      const expiredRes = await api.get("/gymadmin/members/expired");
+      setExpiredCount(expiredRes.data.items?.length || 0);
+    } catch (err) {
+      console.error("Failed to load members data", err);
     }
-
-    setExpiringMembers(soon);
   }, []);
 
-  // ✅ Memoized dashboard loader
+  // Load dashboard summary, revenue, announcements
   const loadDashboard = useCallback(async () => {
     try {
       setLoading(true);
-
-      const [dashboardSummary, revenueSummary, members, annRes] =
-        await Promise.all([
-          getDashboardSummary(),
-          getRevenueSummary(),
-          listMembers(),
-          api.get("/announcements"),
-        ]);
+      const [dashboardSummary, revenueSummary, annRes] = await Promise.all([
+        getDashboardSummary(),
+        getRevenueSummary(),
+        api.get("/gymadmin/announcements"),
+      ]);
 
       setSummary(dashboardSummary);
       setRevenue(revenueSummary);
       setAnnouncements(annRes.data.items || []);
 
-      await loadExpiringMembers(members);
-
+      await loadMembers();
     } catch (err) {
       console.error("Dashboard load failed", err);
     } finally {
       setLoading(false);
     }
-  }, [loadExpiringMembers]);
+  }, [loadMembers]);
 
-  // ✅ Safe useEffect
   useEffect(() => {
     loadDashboard();
   }, [loadDashboard]);
 
-  if (loading) {
-    return <div className={styles.loading}>Loading dashboard…</div>;
-  }
+  // Deactivate member
+  const handleDeactivate = async (memberId) => {
+    if (!window.confirm("Deactivate this member?")) return;
+    try {
+      await api.patch(`/gymadmin/members/${memberId}/deactivate`);
+      // Refresh UI
+      await loadMembers();
+      await loadDashboard();
+      // Optionally redirect to expired members
+      window.location.href = "/gymadmin/members/expired";
+    } catch (err) {
+      console.error(err);
+      alert("Failed to deactivate member");
+    }
+  };
 
-  if (!summary || !revenue) {
-    return <div className={styles.loading}>Loading dashboard...</div>;
-  }
+  if (loading) return <div className={styles.loading}>Loading dashboard…</div>;
 
   return (
     <div className={styles.dashboard}>
       <h1 className={styles.title}>Gym Dashboard</h1>
 
       <div className={styles.cards}>
-        <StatCard label="Members" value={summary.members} />
-        <StatCard label="Trainers" value={summary.trainers} />
-        <StatCard label="Active Members" value={revenue.active_members} />
-        <StatCard label="Total Revenue" value={`KES ${revenue.total_revenue}`} />
+        <StatCard label="Total Members" value={summary?.members} />
+        <StatCard label="Active Members" value={activeMembers} />
+        <StatCard label="Inactive Members" value={inactiveMembers} />
+        <StatCard label="Trainers" value={summary?.trainers} />
+        <StatCard label="Revenue" value={`KES ${revenue?.total_revenue}`} />
+        <StatCard
+          label="Expired Members"
+          value={expiredCount}
+          highlight={expiredCount > 0}
+          link="/gymadmin/members/expired"
+        />
       </div>
 
+      {/* Expiring memberships */}
       <section className={styles.section}>
         <h2>⚠️ Memberships Expiring Soon</h2>
-
         {expiringMembers.length === 0 ? (
-          <p>No memberships expiring in the next {DAYS_WARNING} days.</p>
+          <p className={styles.emptyState}>No memberships expiring soon.</p>
         ) : (
           <div className={styles.tableContainer}>
             <table className={styles.table}>
@@ -112,14 +123,23 @@ export default function Dashboard() {
                   <th>Email</th>
                   <th>Plan</th>
                   <th>Days Left</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {expiringMembers.map((m) => (
+                {expiringMembers.map(m => (
                   <tr key={m.id}>
                     <td>{m.email}</td>
-                    <td>{m.plan}</td>
+                    <td>{m.subscription.plan}</td>
                     <td className={styles.warning}>{m.daysLeft}</td>
+                    <td>
+                      <button
+                        className={styles.deactivateBtn}
+                        onClick={() => handleDeactivate(m.id)}
+                      >
+                        Deactivate
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,27 +148,18 @@ export default function Dashboard() {
         )}
       </section>
 
+      {/* Announcements */}
       <section className={styles.section}>
         <h2>📢 Announcements</h2>
-
         {announcements.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>No announcements yet.</p>
-          </div>
+          <p className={styles.emptyState}>No announcements yet.</p>
         ) : (
           <div className={styles.announcementGrid}>
-            {announcements.slice(0, 6).map((a) => (
+            {announcements.slice(0, 6).map(a => (
               <div key={a.id} className={styles.announcementCard}>
-                <div className={styles.announcementHeader}>
-                  <h3>{a.title}</h3>
-                  <span className={`${styles.tag} ${styles[a.tag]}`}>
-                    {a.tag}
-                  </span>
-                </div>
+                <h3>{a.title}</h3>
                 <p>{a.message}</p>
-                <small>
-                  {new Date(a.created_at).toLocaleString()}
-                </small>
+                <small>{new Date(a.created_at).toLocaleString()}</small>
               </div>
             ))}
           </div>
@@ -158,9 +169,15 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ label, value }) {
-  return (
-    <div className={styles.statCard}>
+// Reusable Stat Card
+function StatCard({ label, value, highlight, link }) {
+  return link ? (
+    <a href={link} className={`${styles.statCard} ${highlight ? styles.highlight : ""}`}>
+      <h2>{value}</h2>
+      <p>{label}</p>
+    </a>
+  ) : (
+    <div className={`${styles.statCard} ${highlight ? styles.highlight : ""}`}>
       <h2>{value}</h2>
       <p>{label}</p>
     </div>

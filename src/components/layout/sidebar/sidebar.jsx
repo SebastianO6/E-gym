@@ -44,7 +44,8 @@ const Sidebar = ({ userRole, open ,setOpen }) => {
       { label: "Clients", icon: Users, to: "/trainer/members" },
       { label: "Plans", icon: TrendingUp, to: "/trainer/plans/create" },
       { label: "Schedule", icon: Bell, to: "/trainer/schedule" },
-      { label: "Messages", icon: Bell, to: "/trainer/messages" },
+      { label: "Messages", icon: Send, to: "/trainer/messages" },
+      { label: "Settings", icon:Settings, to: "/trainer/settings"}, 
     ],
     client: [
       { label: "Dashboard", icon: LayoutDashboard, to: "/client" },
