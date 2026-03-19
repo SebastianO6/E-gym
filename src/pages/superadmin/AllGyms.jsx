@@ -15,6 +15,7 @@ const AllGyms = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingGym, setEditingGym] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [copiedGymId, setCopiedGymId] = useState(null);
 
   // Load gyms from backend
   const loadGyms = async () => {
@@ -47,7 +48,14 @@ const AllGyms = () => {
     }
   };
 
-  // Activate / Deactivate gym
+  const copyJoinLink = async (gym) => {
+    if (!gym.join_url) return;
+    await navigator.clipboard.writeText(gym.join_url);
+    setCopiedGymId(gym.id);
+    setTimeout(() => setCopiedGymId(null), 1500);
+  };
+
+  // Activate / Deactivate gym  
   const toggleGymStatus = async (gym) => {
     try {
       // Determine endpoint based on current status
@@ -107,6 +115,7 @@ const AllGyms = () => {
             <th>Members</th>
             <th>Status</th>
             <th>Subscription</th> 
+            <th>Join Link</th>
             <th />
           </tr>
         </thead>
@@ -126,6 +135,11 @@ const AllGyms = () => {
                 <span className={g.subscription_status === "active" ? styles.active : styles.inactive}>
                   {g.subscription_status}
                 </span>
+              </td>
+              <td>
+                <button onClick={() => copyJoinLink(g)}>
+                  {copiedGymId === g.id ? "Copied" : "Copy Link"}
+                </button>
               </td>
               <td className={styles.actions}>
                 <Eye onClick={() => navigate(`/superadmin/gyms/${g.id}`)} />

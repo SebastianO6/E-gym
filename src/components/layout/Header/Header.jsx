@@ -9,9 +9,7 @@ export default function Header ({ activeTab, toggleSidebar }) {
       <button className={styles.mobileMenuBtn} onClick={toggleSidebar}>
         <Menu size={22} />
       </button>
-      <div className={styles.left}>
-        <h2>{activeTab ? activeTab.toUpperCase() : "DASHBOARD"}</h2>
-      </div>
+
 
       <div className={styles.right}>
         <div className={styles.greeting}>

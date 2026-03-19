@@ -6,6 +6,7 @@ import Layout from "../components/layout/Layout";
 import Login from "../pages/auth/Login";
 import Unauthorized from "../pages/common/Unauthorized";
 import NotFound from "../pages/common/NotFound";
+import JoinGym from "../pages/auth/JoinGym";
 
 /* ============================
    SUPERADMIN
@@ -61,6 +62,7 @@ export default function AppRouter() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/accept-invite" element={<AcceptInvite />} />
+      <Route path="/join/:gymSlug" element={<JoinGym />} />
 
       <Route path="/unauthorized" element={<Unauthorized />} />
       

@@ -47,7 +47,7 @@ export default function Login() {
           <div className={styles.logoCircle}>
             <Dumbbell size={40} color="white" />
           </div>
-          <h1 className={styles.brandTitle}>E-Gym Portal</h1>
+          <h1 className={styles.brandTitle}>Tizi App</h1>
           <p className={styles.brandText}>
             Streamline your fitness management with our professional suite. 
             Track progress, manage clients, and achieve goals.

@@ -11,6 +11,7 @@ const GymDetails = () => {
   const [gym, setGym] = useState(null);
   const [subscription, setSubscription] = useState(null)
   const [showRenew, setShowRenew] = useState(false)
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const loadGym = async () => {
@@ -23,6 +24,13 @@ const GymDetails = () => {
 
     loadGym();
   }, [gymId]);
+
+  const copyJoinLink = async () => {
+    if (!gym?.join_url) return;
+    await navigator.clipboard.writeText(gym.join_url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   if (!gym) return <p>Loading...</p>;
 
@@ -110,6 +118,25 @@ const GymDetails = () => {
           <h3 className={styles.statValue}>
             {gym.address || "N/A"}
           </h3>
+        </div>
+
+        <div className={styles.statCard}>
+          <p className={styles.statLabel}>Member Join Link</p>
+          <h3 className={styles.statValue}>{gym.slug || "N/A"}</h3>
+          {gym.join_url && (
+            <>
+              <a href={gym.join_url} target="_blank" rel="noreferrer">
+                Open registration page
+              </a>
+              <button
+                className={styles.renewBtn}
+                onClick={copyJoinLink}
+                style={{ marginTop: 12 }}
+              >
+                {copied ? "Copied" : "Copy join link"}
+              </button>
+            </>
+          )}
         </div>
 
         <div className={styles.statCard}>

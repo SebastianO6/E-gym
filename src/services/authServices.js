@@ -7,6 +7,11 @@ export async function register(payload) {
   return res.data;
 }
 
+export async function getGymBySlug(gymSlug) {
+  const res = await api.get(`/auth/gyms/${gymSlug}`);
+  return res.data;
+}
+
 export async function login(payload) {
   const res = await api.post("/auth/login", payload);
   const { access_token, refresh_token, user } = res.data;

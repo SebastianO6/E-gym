@@ -66,7 +66,7 @@ const Sidebar = ({ userRole, open ,setOpen }) => {
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.closed}`}>
       <div className={styles.topSection}>
-        {open && <h2 className={styles.logo}>E-Gym</h2>}
+        {open && <h2 className={styles.logo}>Tizi</h2>}
          <button className={styles.toggleBtn} onClick={() => setOpen(!open)}>
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
