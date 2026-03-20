@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { useAlert } from "../../context/AlertContext";
 import "./TrainerSchedules.module.css";
 
 export default function TrainerSchedules() {
@@ -8,6 +9,7 @@ export default function TrainerSchedules() {
   const [schedules, setSchedules] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { confirm } = useAlert();
 
   useEffect(() => {
     load();
@@ -32,7 +34,7 @@ export default function TrainerSchedules() {
   };
 
   const deleteSchedule = async (id) => {
-    if (!window.confirm("Delete this schedule?")) return;
+    if (!(await confirm("Delete this schedule?", { title: "Delete Schedule", confirmLabel: "Delete", type: "danger" }))) return;
 
     try {
       await api.delete(`/schedules/${id}`);

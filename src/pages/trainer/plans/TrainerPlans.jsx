@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "../../services/api";
 import { Link } from "react-router-dom";
+import { useAlert } from "../../../context/AlertContext";
 
 export default function TrainerPlans() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { confirm } = useAlert();
 
   const fetchPlans = async () => {
     try {
@@ -18,7 +20,7 @@ export default function TrainerPlans() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this plan?")) return;
+    if (!(await confirm("Delete this plan?", { title: "Delete Plan", confirmLabel: "Delete", type: "danger" }))) return;
 
     try {
       await axios.delete(`/trainer/workout-plans/${id}`);

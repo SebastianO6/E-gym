@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./PricingSettings.module.css";
 import {
   getGymPricing,
-  setGymPricing
+  setGymPricing,
 } from "../../../services/gymAdminService";
 
 export default function PricingSettings() {
@@ -11,6 +11,8 @@ export default function PricingSettings() {
   const [approved, setApproved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     getGymPricing()
@@ -34,21 +36,31 @@ export default function PricingSettings() {
   }, []);
 
   const save = async () => {
-    setSaving(true);
-    await setGymPricing({
-      daily_price: daily,
-      monthly_price: monthly
-    });
-    setApproved(false);
-    setSaving(false);
-    alert("Pricing submitted for approval");
+    try {
+      setSaving(true);
+      setMessage("");
+      setError("");
+      await setGymPricing({
+        daily_price: daily,
+        monthly_price: monthly,
+      });
+      setApproved(false);
+      setMessage("Pricing submitted for approval");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to save pricing");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <p>Loading pricing...</p>;
 
   return (
     <div className={styles.card}>
-      <h2>💰 Pricing Settings</h2>
+      <h2>Pricing Settings</h2>
+
+      {message && <p className={styles.approved}>{message}</p>}
+      {error && <p className={styles.pending}>{error}</p>}
 
       <div className={styles.field}>
         <label>Daily Price (KES)</label>
@@ -68,25 +80,12 @@ export default function PricingSettings() {
         />
       </div>
 
-      <button
-        className={styles.save}
-        onClick={save}
-        disabled={saving}
-      >
+      <button className={styles.save} onClick={save} disabled={saving}>
         {saving ? "Saving..." : "Save Pricing"}
       </button>
 
-      {!approved && (
-        <p className={styles.pending}>
-          ⏳ Awaiting superadmin approval
-        </p>
-      )}
-
-      {approved && (
-        <p className={styles.approved}>
-          ✅ Pricing approved
-        </p>
-      )}
+      {!approved && <p className={styles.pending}>Awaiting superadmin approval</p>}
+      {approved && <p className={styles.approved}>Pricing approved</p>}
     </div>
   );
 }

@@ -14,18 +14,33 @@ const ClientDashboard = () => {
   const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  Promise.all([
-    getAnnouncements(),
-    api.get("/client/plans"),
-    api.get("/client/membership/me")
-  ])
-    .then(([annRes, planRes, memberRes]) => {
-      setAnnouncements(annRes || []);
-      setPlans(planRes.data || []);
-      setMembership(memberRes.data || null);
-    })
-    .catch(() => {})
-    .finally(() => setLoading(false));
+  let isMounted = true;
+
+  const loadDashboard = () => {
+    Promise.all([
+      getAnnouncements(),
+      api.get("/client/plans"),
+      api.get("/client/membership/me")
+    ])
+      .then(([annRes, planRes, memberRes]) => {
+        if (!isMounted) return;
+        setAnnouncements(annRes || []);
+        setPlans(planRes.data || []);
+        setMembership(memberRes.data || null);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+  };
+
+  loadDashboard();
+  const intervalId = setInterval(loadDashboard, 15000);
+
+  return () => {
+    isMounted = false;
+    clearInterval(intervalId);
+  };
 }, []);
 
   if (loading) {

@@ -6,9 +6,25 @@ export default function ClientPlan() {
   const [plans, setPlans] = useState([]);
 
   useEffect(() => {
-    api.get("/client/plans")
-      .then(res => setPlans(res.data || []))
-      .catch(() => setPlans([]));
+    let isMounted = true;
+
+    const loadPlans = () => {
+      api.get("/client/plans")
+        .then(res => {
+          if (isMounted) setPlans(res.data || []);
+        })
+        .catch(() => {
+          if (isMounted) setPlans([]);
+        });
+    };
+
+    loadPlans();
+    const intervalId = setInterval(loadPlans, 15000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, []);
 
   if (!plans.length)

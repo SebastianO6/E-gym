@@ -10,11 +10,13 @@ import {
 import TrainerForm from "./TrainerForm";
 import styles from "./TrainersList.module.css";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../../context/AlertContext";
 
 export default function TrainersList() {
   const [trainers, setTrainers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const { confirm } = useAlert();
 
   const load = async () => {
     const data = await listTrainers();
@@ -34,7 +36,7 @@ export default function TrainersList() {
   };
 
   const remove = async (id) => {
-    if (!window.confirm("Delete trainer permanently?")) return;
+    if (!(await confirm("Delete trainer permanently?", { title: "Delete Trainer", confirmLabel: "Delete", type: "danger" }))) return;
 
     await deleteTrainer(id);
     load();

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { listMembers, deactivateMember, activateMember } from "../../../services/gymAdminService";
+import { useAlert } from "../../../context/AlertContext";
 import AddMemberModal from "./AddMemberModal";
 import EditMemberModal from "./EditMemberModal";
 import { Search, Plus } from "lucide-react";
@@ -12,6 +13,7 @@ export default function MembersList() {
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
+  const { confirm } = useAlert();
 
   const loadMembers = async () => {
     try {
@@ -34,13 +36,12 @@ export default function MembersList() {
   }, [members, search]);
 
   const handleDeactivate = async (memberId) => {
-    if (!window.confirm("Deactivate this member?")) return;
+    if (!(await confirm("Deactivate this member?", { title: "Deactivate Member", confirmLabel: "Deactivate", type: "danger" }))) return;
     try {
       await deactivateMember(memberId);
       await loadMembers();
       navigate("/gymadmin/members/expired");
     } catch (err) {
-      console.warn(err);
       alert("Failed to deactivate member");
     }
   };
@@ -103,7 +104,13 @@ export default function MembersList() {
       </table>
 
       {showAdd && <AddMemberModal onClose={() => setShowAdd(false)} onCreated={loadMembers} />}
-      {editingMember && <EditMemberModal member={editingMember} onClose={() => setEditingMember(null)} />}
+      {editingMember && (
+        <EditMemberModal
+          member={editingMember}
+          onClose={() => setEditingMember(null)}
+          onSaved={loadMembers}
+        />
+      )}
     </div>
   );
 }

@@ -167,6 +167,16 @@ export const getRevenueSeries = async () => {
   return res.data;
 };
 
+export const getPlatformBilling = async () => {
+  const res = await api.get("/gymadmin/platform-billing");
+  return res.data;
+};
+
+export const getPlatformMemberGrowth = async () => {
+  const res = await api.get("/gymadmin/platform-billing/member-growth");
+  return res.data;
+};
+
 
 export const getMemberPayments = async (memberId) => {
   const res = await api.get(`/gymadmin/members/${memberId}/payments`);

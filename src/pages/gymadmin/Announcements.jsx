@@ -10,6 +10,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import api from "../../api/axios";
+import { useAlert } from "../../context/AlertContext";
 import styles from "./Announcements.module.css";
 
 const Announcements = () => {
@@ -18,6 +19,7 @@ const Announcements = () => {
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const { confirm } = useAlert();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -90,13 +92,12 @@ const Announcements = () => {
      DELETE
   ========================= */
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this announcement?")) return;
+    if (!(await confirm("Delete this announcement?", { title: "Delete Announcement", confirmLabel: "Delete", type: "danger" }))) return;
 
     try {
       await api.delete(`/gymadmin/announcements/${id}`);
       loadAnnouncements();
     } catch (err) {
-      console.error(err);
       setError("Failed to delete announcement");
     }
   };

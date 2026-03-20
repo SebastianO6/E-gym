@@ -1,8 +1,10 @@
 import axios from "axios";
 import { getAuthToken, clearAuth } from "../utils/authLocal";
 
+const apiBaseUrl = (process.env.REACT_APP_API_URL || "http://localhost:5000/api").replace(/\/+$/, "");
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: apiBaseUrl,
 });
 
 api.interceptors.request.use((config) => {

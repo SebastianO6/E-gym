@@ -29,6 +29,21 @@ export const getPlatformRevenue = async () => {
   return res.data;
 };
 
+export const getPlatformMemberGrowth = async () => {
+  const res = await api.get("/superadmin/billing/member-growth");
+  return res.data;
+};
+
+export const getAuditLogs = async (limit = 100) => {
+  const res = await api.get("/superadmin/audit-logs", { params: { limit } });
+  return res.data;
+};
+
+export const cleanupAuditLogs = async (payload) => {
+  const res = await api.delete("/superadmin/audit-logs", { data: payload });
+  return res.data;
+};
+
 
 export const deactivateGym = (gymId) =>
   api.patch(`/superadmin/gyms/${gymId}/deactivate`);

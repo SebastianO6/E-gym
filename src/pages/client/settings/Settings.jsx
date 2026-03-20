@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Lock, User, Mail, Shield, Key, CheckCircle, AlertCircle, Eye, EyeOff } from "lucide-react";
 import api from "../../../api/axios";
 import styles from "./Settings.module.css";
 
 const Settings = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");

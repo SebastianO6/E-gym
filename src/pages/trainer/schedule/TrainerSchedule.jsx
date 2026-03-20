@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api/axios";
 import { updateSchedule } from "../../../services/trainerServiceSchedule";
+import { useAlert } from "../../../context/AlertContext";
 import styles from "./TrainerSchedule.module.css";
 
 const TrainerSchedule = () => {
   const [sessions, setSessions] = useState([]);
   const navigate = useNavigate();
+  const { confirm } = useAlert();
 
   const load = async () => {
     try {
@@ -28,13 +30,12 @@ const TrainerSchedule = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this session?")) return;
+    if (!(await confirm("Delete this session?", { title: "Delete Session", confirmLabel: "Delete", type: "danger" }))) return;
 
     try {
       await api.delete(`/schedules/${id}`);
       load();
     } catch (err) {
-      console.error(err);
       alert("Failed to delete schedule");
     }
   };

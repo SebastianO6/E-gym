@@ -122,3 +122,8 @@
 .saveBtn:hover {
   background: #1d4ed8;
 }
+
+.saveBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

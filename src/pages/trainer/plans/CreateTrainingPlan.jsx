@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import styles from "./CreateTrainingPlan.module.css";
 import { Plus, Save, Calendar } from "lucide-react";
 import api from "../../../api/axios";
+import { useAlert } from "../../../context/AlertContext";
 
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
@@ -20,6 +21,7 @@ export default function CreateTrainingPlan() {
   const [notes, setNotes] = useState("");
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState(memberId || clientIdFromURL || "");
+  const { confirm } = useAlert();
 
   useEffect(() => {
     if (!memberId) {
@@ -71,7 +73,7 @@ export default function CreateTrainingPlan() {
 
       const created = res.data;
 
-      if (window.confirm("Plan created. Schedule first session now?")) {
+      if (await confirm("Plan created. Schedule first session now?", { title: "Plan Created", confirmLabel: "Schedule Session" })) {
         navigate(`/trainer/schedule?plan_id=${created.id}&client_id=${selectedClient}`);
       } else {
         navigate(`/trainer/members/${selectedClient}`);

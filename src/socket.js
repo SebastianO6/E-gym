@@ -1,14 +1,27 @@
-// src/socket.js
 import { io } from "socket.io-client";
+
+let socketInstance = null;
+let activeToken = null;
 
 export const connectSocket = (token) => {
   if (!token) {
-    console.log("❌ No token provided to socket");
     return null;
   }
 
-  const socket = io("http://localhost:5000", {
-    transports: ["websocket"],
+  const socketUrl = (process.env.REACT_APP_SOCKET_URL || "http://localhost:5000").replace(/\/+$/, "");
+
+  if (socketInstance && activeToken === token) {
+    return socketInstance;
+  }
+
+  if (socketInstance) {
+    socketInstance.disconnect();
+  }
+
+  activeToken = token;
+  socketInstance = io(socketUrl, {
+    transports: ["polling"],
+    upgrade: false,
     auth: {
       token: `Bearer ${token}`,
     },
@@ -17,17 +30,13 @@ export const connectSocket = (token) => {
     reconnectionDelay: 1000,
   });
 
-  socket.on("connect", () => {
-    console.log("✅ Socket connected:", socket.id);
-  });
+  return socketInstance;
+};
 
-  socket.on("connect_error", (err) => {
-    console.log("❌ Socket connection error:", err.message);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ Socket disconnected");
-  });
-
-  return socket;
+export const disconnectSocket = () => {
+  if (socketInstance) {
+    socketInstance.disconnect();
+    socketInstance = null;
+    activeToken = null;
+  }
 };

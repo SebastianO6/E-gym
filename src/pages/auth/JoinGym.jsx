@@ -12,6 +12,7 @@ const JoinGym = () => {
     first_name: "",
     last_name: "",
     email: "",
+    phone: "",
   });
   const [gym, setGym] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ const JoinGym = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.first_name || !form.last_name || !form.email) {
+    if (!form.first_name || !form.last_name || !form.email || !form.phone) {
       setError("All fields are required");
       return;
     }
@@ -104,6 +105,12 @@ const JoinGym = () => {
           placeholder="Email"
           value={form.email}
           onChange={(e) => updateField("email", e.target.value)}
+        />
+
+        <input
+          placeholder="Phone Number"
+          value={form.phone}
+          onChange={(e) => updateField("phone", e.target.value)}
         />
 
         <button disabled={loading || loadingGym || !gym}>

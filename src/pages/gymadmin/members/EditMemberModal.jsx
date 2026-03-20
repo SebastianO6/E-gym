@@ -1,28 +1,46 @@
-import React, { useState, useEffect } from "react";
-import styles from "./EditMemberModal.module.css";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-const EditMemberModal = ({ member, onClose }) => {
+import { updateMember } from "../../../services/gymAdminService";
+import styles from "./EditMemberModal.module.css";
+
+const EditMemberModal = ({ member, onClose, onSaved }) => {
   const [form, setForm] = useState({
     name: "",
     phone: "",
   });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (member) {
-      setForm({
-        name: member.name || "",
-        phone: member.phone || "",
-      });
-    }
+    if (!member) return;
+
+    setForm({
+      name: member.full_name || `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+      phone: member.phone || "",
+    });
   }, [member]);
 
-  const update = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const updateField = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
-  const save = () => {
-    console.log("UPDATED MEMBER:", member.id, form);
-    // TODO → api.put(`/members/${member.id}`, form)
-    onClose();
+  const save = async () => {
+    if (!member?.id || saving) return;
+
+    setSaving(true);
+    try {
+      await updateMember(member.id, {
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+      });
+      window.alert("Member details updated successfully.");
+      await onSaved?.();
+      onClose();
+    } catch (error) {
+      window.alert(error.response?.data?.error || "Failed to update member details.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!member) return null;
@@ -43,7 +61,7 @@ const EditMemberModal = ({ member, onClose }) => {
             <input
               className={styles.input}
               value={form.name}
-              onChange={(e) => update("name", e.target.value)}
+              onChange={(e) => updateField("name", e.target.value)}
             />
           </div>
 
@@ -52,7 +70,7 @@ const EditMemberModal = ({ member, onClose }) => {
             <input
               className={styles.input}
               value={form.phone}
-              onChange={(e) => update("phone", e.target.value)}
+              onChange={(e) => updateField("phone", e.target.value)}
             />
           </div>
         </div>
@@ -61,8 +79,8 @@ const EditMemberModal = ({ member, onClose }) => {
           <button onClick={onClose} className={styles.cancelBtn}>
             Cancel
           </button>
-          <button onClick={save} className={styles.saveBtn}>
-            Save
+          <button onClick={save} className={styles.saveBtn} disabled={saving}>
+            {saving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>

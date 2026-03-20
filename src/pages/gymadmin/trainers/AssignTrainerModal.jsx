@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { listTrainers, assignTrainerToMember } from "../../../services/gymAdminService";
+import { useAlert } from "../../../context/AlertContext";
 import styles from "./AssignTrainerModal.module.css";
 
 export default function AssignTrainerModal({ memberId, onClose, onDone }) {
   const [trainers, setTrainers] = useState([]);
   const [trainerId, setTrainerId] = useState("");
   const [loading, setLoading] = useState(false);
+  const { confirm } = useAlert();
 
   useEffect(() => {
     async function load() {
@@ -25,6 +27,7 @@ export default function AssignTrainerModal({ memberId, onClose, onDone }) {
     setLoading(true);
     try {
       await assignTrainerToMember(memberId, trainerId);
+      await confirm("Trainer assigned successfully", { title: "Success", confirmLabel: "OK" });
       onDone?.();
       onClose();
     } finally {

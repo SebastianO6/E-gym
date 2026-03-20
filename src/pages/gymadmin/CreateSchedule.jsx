@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import "./CreateSchedule.module.css";
@@ -25,19 +25,7 @@ const CreateSchedule = () => {
   const [trainers, setTrainers] = useState([]);
   const [members, setMembers] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [memberTrainers, setMemberTrainers] = useState({});
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (formData.member_id) {
-      loadMemberTrainer();
-    }
-  }, [formData.member_id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -58,9 +46,9 @@ const CreateSchedule = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadMemberTrainer = async () => {
+  const loadMemberTrainer = useCallback(async () => {
     try {
       const response = await api.get(`/gymadmin/members/${formData.member_id}`);
       const member = response.data;
@@ -75,7 +63,17 @@ const CreateSchedule = () => {
     } catch (err) {
       console.error("Failed to load member details:", err);
     }
-  };
+  }, [formData.member_id]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    if (formData.member_id) {
+      loadMemberTrainer();
+    }
+  }, [formData.member_id, loadMemberTrainer]);
 
   const generateTimeSlots = () => {
     const slots = [];
