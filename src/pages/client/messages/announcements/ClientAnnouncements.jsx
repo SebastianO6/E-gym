@@ -1,16 +1,40 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ClientAnnouncements.module.css";
 import api from "../../../../api/axios";
+import { connectSocket } from "../../../../socket";
+import { getAuthToken } from "../../../../utils/authLocal";
 
 export default function ClientAnnouncements() {
   const [anns, setAnns] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/client/announcements")
-      .then(res => setAnns(res.data || []))
-      .catch(() => setAnns([]))
-      .finally(() => setLoading(false));
+    const loadAnnouncements = () =>
+      api.get("/client/announcements")
+        .then(res => setAnns(res.data || []))
+        .catch(() => setAnns([]))
+        .finally(() => setLoading(false));
+
+    loadAnnouncements();
+
+    const token = getAuthToken();
+    const socket = connectSocket(token);
+
+    if (!socket) {
+      return undefined;
+    }
+
+    const refresh = () => loadAnnouncements();
+
+    socket.on("announcement_created", refresh);
+    socket.on("announcement_updated", refresh);
+    socket.on("announcement_deleted", refresh);
+
+    return () => {
+      socket.off("announcement_created", refresh);
+      socket.off("announcement_updated", refresh);
+      socket.off("announcement_deleted", refresh);
+    };
   }, []);
 
   return (

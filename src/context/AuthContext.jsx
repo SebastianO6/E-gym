@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   // Auto-connect socket when authenticated
   useEffect(() => {
     if (auth?.accessToken && !auth?.mustChangePassword) {
-      connectSocket();
+      connectSocket(auth.accessToken);
     }
   }, [auth?.accessToken, auth?.mustChangePassword]);
 

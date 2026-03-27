@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import ClientSchedule from "./clientSchedule";
 import api from "../../api/axios";
 import { getAnnouncements } from "../../services/clientService";
+import { connectSocket } from "../../socket";
+import { getAuthToken } from "../../utils/authLocal";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -36,10 +38,23 @@ useEffect(() => {
 
   loadDashboard();
   const intervalId = setInterval(loadDashboard, 15000);
+  const token = getAuthToken();
+  const socket = connectSocket(token);
+
+  if (socket) {
+    socket.on("announcement_created", loadDashboard);
+    socket.on("announcement_updated", loadDashboard);
+    socket.on("announcement_deleted", loadDashboard);
+  }
 
   return () => {
     isMounted = false;
     clearInterval(intervalId);
+    if (socket) {
+      socket.off("announcement_created", loadDashboard);
+      socket.off("announcement_updated", loadDashboard);
+      socket.off("announcement_deleted", loadDashboard);
+    }
   };
 }, []);
 

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import api from "../../api/axios";
 import { useAlert } from "../../context/AlertContext";
+import { connectSocket } from "../../socket";
+import { getAuthToken } from "../../utils/authLocal";
 import styles from "./Announcements.module.css";
 
 const Announcements = () => {
@@ -47,6 +49,25 @@ const Announcements = () => {
 
   useEffect(() => {
     loadAnnouncements();
+  }, [loadAnnouncements]);
+
+  useEffect(() => {
+    const token = getAuthToken();
+    const socket = connectSocket(token);
+
+    if (!socket) {
+      return undefined;
+    }
+
+    socket.on("announcement_created", loadAnnouncements);
+    socket.on("announcement_updated", loadAnnouncements);
+    socket.on("announcement_deleted", loadAnnouncements);
+
+    return () => {
+      socket.off("announcement_created", loadAnnouncements);
+      socket.off("announcement_updated", loadAnnouncements);
+      socket.off("announcement_deleted", loadAnnouncements);
+    };
   }, [loadAnnouncements]);
 
   /* =========================

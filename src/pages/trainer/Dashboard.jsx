@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./Dashboard.module.css";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,6 +10,8 @@ import {
   Plus,
 } from "lucide-react";
 import api from "../../api/axios";
+import { connectSocket } from "../../socket";
+import { getAuthToken } from "../../utils/authLocal";
 
 const TrainerDashboard = () => {
   const navigate = useNavigate();
@@ -18,11 +20,7 @@ const TrainerDashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const [membersRes, scheduleRes, announcementRes] =
         await Promise.all([
@@ -37,7 +35,28 @@ const TrainerDashboard = () => {
     } catch (err) {
       console.error("Dashboard error:", err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+
+    const token = getAuthToken();
+    const socket = connectSocket(token);
+
+    if (!socket) {
+      return undefined;
+    }
+
+    socket.on("announcement_created", fetchDashboardData);
+    socket.on("announcement_updated", fetchDashboardData);
+    socket.on("announcement_deleted", fetchDashboardData);
+
+    return () => {
+      socket.off("announcement_created", fetchDashboardData);
+      socket.off("announcement_updated", fetchDashboardData);
+      socket.off("announcement_deleted", fetchDashboardData);
+    };
+  }, [fetchDashboardData]);
 
   const today = new Date().toISOString().split("T")[0];
 
