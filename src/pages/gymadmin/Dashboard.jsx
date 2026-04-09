@@ -1,12 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-import { getDashboardSummary, getRevenueSeries, getRevenueSummary, listMembers } from "../../services/gymAdminService";
+import { getDashboardSummary, getRevenueSeries, getRevenueSummary } from "../../services/gymAdminService";
 import api from "../../api/axios";
 import { useAlert } from "../../context/AlertContext";
 import styles from "./Dashboard.module.css";
-
-const DAYS_WARNING = 3;
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
@@ -19,36 +17,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const { confirm } = useAlert();
 
-  const loadMembers = useCallback(async () => {
-    try {
-      const members = await listMembers();
-      const today = new Date();
-
-      const active = members.filter((member) => member.status === "active");
-      const inactive = members.filter((member) => member.status !== "active");
-
-      setActiveMembers(active.length);
-      setInactiveMembers(inactive.length);
-
-      const soon = active
-        .filter((member) => member.subscription?.end_date)
-        .map((member) => ({
-          ...member,
-          daysLeft: Math.ceil(
-            (new Date(member.subscription.end_date) - today) / (1000 * 60 * 60 * 24)
-          ),
-        }))
-        .filter((member) => member.daysLeft <= DAYS_WARNING && member.daysLeft >= 0);
-
-      setExpiringMembers(soon);
-
-      const expiredRes = await api.get("/gymadmin/members/expired");
-      setExpiredCount(expiredRes.data.items?.length || 0);
-    } catch (err) {
-      console.error("Failed to load members data", err);
-    }
-  }, []);
-
   const loadDashboard = useCallback(async () => {
     try {
       setLoading(true);
@@ -59,6 +27,10 @@ export default function Dashboard() {
       ]);
 
       setSummary(dashboardSummary);
+      setActiveMembers(dashboardSummary?.active_members || 0);
+      setInactiveMembers(dashboardSummary?.inactive_members || 0);
+      setExpiredCount(dashboardSummary?.expired_members || 0);
+      setExpiringMembers(dashboardSummary?.expiring_members || []);
       setRevenue(revenueSummary);
       setRevenueSeries(
         (revenueSeriesData || []).map((item) => ({
@@ -69,14 +41,12 @@ export default function Dashboard() {
           }),
         }))
       );
-
-      await loadMembers();
     } catch (err) {
       console.error("Dashboard load failed", err);
     } finally {
       setLoading(false);
     }
-  }, [loadMembers]);
+  }, []);
 
   useEffect(() => {
     loadDashboard();

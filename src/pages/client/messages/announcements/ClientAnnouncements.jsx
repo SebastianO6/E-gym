@@ -53,7 +53,14 @@ export default function ClientAnnouncements() {
             <h4 className={styles.cardTitle}>{a.title}</h4>
             <p className={styles.message}>{a.message}</p>
             <span className={styles.date}>
-              {new Date(a.created_at).toLocaleDateString()}
+              {new Date(a.created_at).toLocaleString("en-KE", {
+                timeZone: "Africa/Nairobi",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </div>
         ))}

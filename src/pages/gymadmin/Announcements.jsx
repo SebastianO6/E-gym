@@ -215,7 +215,14 @@ const Announcements = () => {
               <h3>{a.title}</h3>
               <small>
                 <Calendar size={14} />{" "}
-                {new Date(a.created_at).toLocaleString()}
+                {new Date(a.created_at).toLocaleString("en-KE", {
+                  timeZone: "Africa/Nairobi",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </small>
               <p>{a.message}</p>
 
